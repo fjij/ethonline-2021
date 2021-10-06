@@ -7,7 +7,9 @@
     "test": "npx hardhat test",
     "node": "npx hardhat node",
     "compile": "npx hardhat compile",
-    "deploy": "npx hardhat run scripts/deploy.ts --network localhost"
+    "upload-cards": "npx ts-node scripts/upload-cards.ts",
+    "deploy": "npx hardhat run scripts/deploy.ts --network localhost && npm run copy-contracts && cp ./deployments/localhost/deployment.json ./web/src/contracts",
+    "copy-contracts": "mkdir -p ./web/src/contracts && cp ./artifacts/contracts/*/* ./web/src/contracts/"
   },
   "repository": {
     "type": "git",
