@@ -94,7 +94,7 @@ function requestMatch(msg: message.Message) {
 
 function acceptResponse(msg: message.Message) {
   message.send({
-    poster: msg.getSender(),
+    other: msg.getSender(),
     key: 'accept'
   }, channel.matchmaking);
 }
