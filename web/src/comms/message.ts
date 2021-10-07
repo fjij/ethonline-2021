@@ -1,4 +1,4 @@
-import { Waku, WakuMessage } from 'js-waku';
+import { Waku, WakuMessage, getBootstrapNodes } from 'js-waku';
 import { ethers } from 'ethers';
 
 import { wallet } from '../eth';
@@ -17,7 +17,9 @@ export async function setWalletSignature(signature: string | null) {
 }
 
 (async () => {
-  waku = await Waku.create({ bootstrap: true  });
+  waku = await Waku.create({
+    bootstrap: getBootstrapNodes.bind({}, ['fleets', 'wakuv2.test', 'waku-websocket'])
+  });
   console.log('connected to waku');
 })();
 
