@@ -1,42 +1,18 @@
-import {
-  Waku,
-  WakuMessage,
-  generatePrivateKey,
-  getPublicKey as getPublicKeyFromPrivateKey,
-} from 'js-waku';
+import { Waku, WakuMessage } from 'js-waku';
 import { ethers } from 'ethers';
+
+import { wallet } from '../eth';
 import * as channel from './channel';
+import * as crypto from './crypto';
 
-const cryptoRandomString = require('crypto-random-string');
-const base64 = require('base-64');
-const symKey = Uint8Array.from([244, 113, 77, 232, 208, 27, 87, 163, 150, 148,
-  170, 118, 80, 13, 67, 23, 22, 51, 224, 30, 75, 191, 66, 106, 231, 217, 106,
-  16, 246, 245, 112, 101]);
-
-const NONCE_LENGTH = 32;
-const KEY_NAME = 'super-card-game-session-key';
+const NONCE_BYTES = 24;
 
 let waku: Waku;
 const sent: { [key: string]: boolean } = {};
+let walletSignature: null | string = null;
 
-const privateKey = generatePrivateKey();
-const publicKey = getPublicKeyFromPrivateKey(privateKey);
-let signature: null | string = null;
-
-export function getPublicKey(): Uint8Array {
-  return publicKey;
-}
-
-export function getPublicKeyString(publicKey: Uint8Array): string {
-  return `${KEY_NAME}: ${base64.encode(publicKey)}`;
-}
-
-export function submitSignature(sig: string) {
-  signature = sig;
-}
-
-export function hasSignature(): boolean {
-  return !!signature;
+export async function setWalletSignature(signature: string | null) {
+  walletSignature = signature;
 }
 
 async function assertWaku() {
@@ -48,26 +24,32 @@ async function assertWaku() {
 
 export class Message {
   data: object;
+  sender: string;
   signature: string;
   nonce: string;
-  sender: string | null = null;
 
-  constructor(data: object, signature: string, nonce?: string) {
+  constructor(data: object, sender: string, signature: string, nonce?: string) {
     this.data = data;
+    this.sender = sender;
     this.signature = signature;
-    this.nonce = nonce ?? cryptoRandomString(NONCE_LENGTH);
+    this.nonce = nonce ?? crypto.b64encode(crypto.randomBytes(NONCE_BYTES));
   }
 
   toString() {
     return JSON.stringify({
       data: this.data,
+      signature: this.signature,
       nonce: this.nonce,
-      signature
+      sender: this.sender,
     });
   }
 
   getData() {
     return this.data;
+  }
+
+  getSender() {
+    return this.sender;
   }
 
   getNonce() {
@@ -78,14 +60,13 @@ export class Message {
     return this.signature;
   }
 
-  verify(publicKey: Uint8Array) {
-    const str = getPublicKeyString(publicKey);
-    this.sender = ethers.utils.verifyMessage(str, this.signature);
+  verify(publicKey: string) {
+    return this.sender === ethers.utils.verifyMessage(publicKey, this.signature);
   }
 
   static fromString(str: string): Message {
-    const { data, nonce } = JSON.parse(str);
-    return new Message(data, nonce);
+    const { data, nonce, signature, sender } = JSON.parse(str);
+    return new Message(data, sender, signature, nonce);
   }
 }
 
@@ -97,16 +78,15 @@ export async function listen(
   await assertWaku();
   const seen: { [key: string]: boolean } = {};
   const listener = (wakuMsg: WakuMessage) => {
-    const otherPublicKey = wakuMsg.signaturePublicKey;
-    if (otherPublicKey) {
-      const msg = Message.fromString(wakuMsg.payloadAsUtf8);
-      try {
-        msg.verify(otherPublicKey);
+    const signedMsg: crypto.SignedMessage = JSON.parse(wakuMsg.payloadAsUtf8);
+    if (crypto.verify(signedMsg)) {
+      const msg = Message.fromString(signedMsg.message);
+      if (msg.verify(signedMsg.publicKey)) {
         if (!seen[msg.getNonce()] && !sent[msg.getNonce()]) {
           callback(msg);
           seen[msg.getNonce()] = true;
         }
-      } catch {}
+      }
     }
   };
   waku.relay.addObserver(listener, [contentTopic]);
@@ -114,16 +94,14 @@ export async function listen(
 }
 
 export async function send(data: object, channel: channel.Channel) {
-  if (signature) {
-    const msg = new Message(data, signature);
-    const contentTopic = channel.getContentTopic();
-    await assertWaku();
-    const wakuMsg = await WakuMessage.fromUtf8String(msg.toString(), contentTopic, {
-      sigPrivKey: privateKey,
-    });
-    sent[msg.getNonce()] = true;
-    await waku.relay.send(wakuMsg);
-  } else {
-    throw new Error('not signed');
+  if (!walletSignature) {
+    throw new Error('no signature');
   }
+  const msg = new Message(data, wallet.getAddress(), walletSignature);
+  const signedMsg = crypto.sign(msg.toString());
+  const contentTopic = channel.getContentTopic();
+  await assertWaku();
+  const wakuMsg = await WakuMessage.fromUtf8String(JSON.stringify(signedMsg), contentTopic);
+  sent[msg.getNonce()] = true;
+  await waku.relay.send(wakuMsg);
 }

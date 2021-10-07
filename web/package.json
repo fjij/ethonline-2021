@@ -12,8 +12,10 @@
     "@types/react-dom": "^17.0.9",
     "base-64": "^1.0.0",
     "crypto-random-string": "^1.0.0",
+    "elliptic": "^6.5.4",
     "ethers": "^5.4.7",
     "js-waku": "^0.12.2",
+    "keccak256": "^1.0.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
@@ -45,6 +47,8 @@
     ]
   },
   "devDependencies": {
-    "@types/crypto-random-string": "^2.0.0"
+    "@types/base-64": "^1.0.0",
+    "@types/crypto-random-string": "^2.0.0",
+    "@types/elliptic": "^6.4.13"
   }
 }

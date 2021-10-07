@@ -7,7 +7,6 @@ export default function Matchmaking() {
     if (lfg) {
       let unsubscribe: () => void;
       message.listen((msg) => {
-        console.log(msg.sender);
         console.log(msg.data);
       }, channel.matchmaking).then(f => unsubscribe = f);
       return () => {
