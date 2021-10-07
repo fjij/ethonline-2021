@@ -23,12 +23,12 @@ async function assertWaku() {
 }
 
 export class Message {
-  data: object;
+  data: any;
   sender: string;
   signature: string;
   nonce: string;
 
-  constructor(data: object, sender: string, signature: string, nonce?: string) {
+  constructor(data: any, sender: string, signature: string, nonce?: string) {
     this.data = data;
     this.sender = sender;
     this.signature = signature;
@@ -93,7 +93,7 @@ export async function listen(
   return () => waku.relay.deleteObserver(listener, [contentTopic]);
 }
 
-export async function send(data: object, channel: channel.Channel) {
+export async function send(data: any, channel: channel.Channel) {
   if (!walletSignature) {
     throw new Error('no signature');
   }

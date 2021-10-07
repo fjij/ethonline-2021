@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { message, channel } from './comms';
+import useInterval from './hooks/useInterval';
+import { message, channel, matchmaking } from './comms';
 
 export default function Matchmaking() {
   const [lfg, setLfg] = useState(false);
   useEffect(() => {
     if (lfg) {
       let unsubscribe: () => void;
+
       message.listen((msg) => {
-        console.log(msg.data);
-      }, channel.matchmaking).then(f => unsubscribe = f);
-      return () => {
-        unsubscribe();
-      }
-    } else {
+        const match = matchmaking.handleMessage(msg);
+        if (match) {
+          console.log(match);
+        }
+      }, channel.matchmaking)
+        .then(f => unsubscribe = f);
+
+      return () => unsubscribe();
     }
   }, [lfg]);
-  const data = { text: 'pulse' };
+
+  useInterval(() => {
+    if (lfg) {
+      matchmaking.sendMatchPosting();
+    }
+  }, 1000);
+
   return (
     <div className="matchmaking">
       { lfg ?
         <>
           <span>{ 'Searching for game...' }</span>
-          <button onClick={ () => message.send(data, channel.matchmaking) }>Send Message</button>
           <button onClick={ () => setLfg(false) }> Stop</button>
         </>:
         <>
