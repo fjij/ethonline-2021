@@ -55,8 +55,11 @@ export function handleMessage(state: State, msg: message.Message): State {
   switch (data.key) {
     case 'posting':
     {
-      requestMatch(msg);
-      return { key: 'negotiating', other: msg.getSender() };
+      if (state.key === 'searching') {
+        requestMatch(msg);
+        return { key: 'negotiating', other: msg.getSender() };
+      }
+      return state;
     }
     case 'response':
     {
@@ -92,6 +95,6 @@ function requestMatch(msg: message.Message) {
 function acceptResponse(msg: message.Message) {
   message.send({
     poster: msg.getSender(),
-    key: 'response'
+    key: 'accept'
   }, channel.matchmaking);
 }

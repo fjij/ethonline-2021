@@ -21,9 +21,11 @@ export default function Matchmaking() {
 
   useInterval(() => {
     if (lfg) {
-      matchmaking.sendMatchPosting();
+      if (state.key === 'searching') {
+        matchmaking.sendMatchPosting();
+      } 
     }
-  }, 1000);
+  }, 3500);
 
   return (
     <div className="matchmaking">
