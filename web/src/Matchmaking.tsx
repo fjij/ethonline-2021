@@ -3,17 +3,20 @@ import useInterval from './hooks/useInterval';
 import { message, channel, matchmaking } from './comms';
 
 export default function Matchmaking() {
+
   const [lfg, setLfg] = useState(false);
+  const [state, setState] = useState<matchmaking.State>({ key: 'none' });
+
   useEffect(() => {
     if (lfg) {
+      setState({ key: 'searching' });
       return message.listen((msg) => {
-        const match = matchmaking.handleMessage(msg);
-        if (match) {
-          console.log(match);
-        }
+        setState(state => matchmaking.handleMessage(state, msg));
       }, channel.matchmaking);
+    } else {
+      setState({ key: 'none' });
     }
-  }, [lfg]);
+  }, [lfg],);
 
   useInterval(() => {
     if (lfg) {
@@ -25,7 +28,8 @@ export default function Matchmaking() {
     <div className="matchmaking">
       { lfg ?
         <>
-          <span>{ 'Searching for game...' }</span>
+          <p>{ 'Searching for game...' }</p>
+          <p>{ state.key }</p>
           <button onClick={ () => setLfg(false) }> Stop</button>
         </>:
         <>
