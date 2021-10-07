@@ -22,7 +22,7 @@ export default function Matchmaking() {
       { lfg ?
         <>
           <span>{ 'Searching for game...' }</span>
-          <button onClick={ () => message.send(data, channel.matchmaking) }> Stop</button>
+          <button onClick={ () => message.send(data, channel.matchmaking) }>Send Message</button>
           <button onClick={ () => setLfg(false) }> Stop</button>
         </>:
         <>
