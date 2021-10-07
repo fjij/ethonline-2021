@@ -10,6 +10,7 @@
     "@types/node": "^12.20.28",
     "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.9",
+    "crypto-random-string": "^1.0.0",
     "js-waku": "^0.12.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -40,5 +41,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/crypto-random-string": "^2.0.0"
   }
 }
