@@ -11,6 +11,7 @@ export default function Matchmaking() {
     if (lfg) {
       setState({ key: 'searching' });
       return message.listen((msg) => {
+        console.log(msg);
         setState(state => matchmaking.handleMessage(state, msg));
       }, channel.matchmaking);
     } else {

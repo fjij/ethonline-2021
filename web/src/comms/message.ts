@@ -26,25 +26,32 @@ function assertWaku() {
   }
 }
 
+interface MessageMetadata {
+  timestamp: number;
+  nonce: string;
+  signature: string;
+}
+
 export class Message {
   data: any;
   sender: string;
-  signature: string;
-  nonce: string;
+  metadata: MessageMetadata;
 
-  constructor(data: any, sender: string, signature: string, nonce?: string) {
+  constructor(data: any, sender: string, signature: string, metadata?: MessageMetadata) {
     this.data = data;
     this.sender = sender;
-    this.signature = signature;
-    this.nonce = nonce ?? crypto.b64encode(crypto.randomBytes(NONCE_BYTES));
+    this.metadata = metadata ?? {
+      timestamp: Date.now(),
+      nonce: crypto.b64encode(crypto.randomBytes(NONCE_BYTES)),
+      signature,
+    };
   }
 
   toString() {
     return JSON.stringify({
       data: this.data,
-      signature: this.signature,
-      nonce: this.nonce,
       sender: this.sender,
+      metadata: this.metadata,
     });
   }
 
@@ -57,20 +64,24 @@ export class Message {
   }
 
   getNonce() {
-    return this.nonce;
+    return this.metadata.nonce;
+  }
+
+  getTimestamp() {
+    return this.metadata.timestamp
   }
 
   getSignature() {
-    return this.signature;
+    return this.metadata.signature;
   }
 
   verify(publicKey: string) {
-    return this.sender === ethers.utils.verifyMessage(publicKey, this.signature);
+    return this.sender === ethers.utils.verifyMessage(publicKey, this.getSignature());
   }
 
   static fromString(str: string): Message {
-    const { data, nonce, signature, sender } = JSON.parse(str);
-    return new Message(data, sender, signature, nonce);
+    const { data, sender, metadata } = JSON.parse(str);
+    return new Message(data, sender, metadata.signature, metadata);
   }
 }
 

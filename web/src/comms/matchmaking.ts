@@ -72,7 +72,7 @@ export function handleMessage(state: State, msg: message.Message): State {
     {
       if (state.key === 'negotiating') {
         if (data.other === wallet.getAddress()) {
-          return { key: 'found', other: msg.sender };
+          return { key: 'found', other: msg.getSender() };
         }
       }
       return state;
@@ -82,14 +82,14 @@ export function handleMessage(state: State, msg: message.Message): State {
 
 function requestMatch(msg: message.Message) {
   message.send({
-    other: msg.sender,
+    other: msg.getSender(),
     key: 'response'
   }, channel.matchmaking);
 }
 
 function acceptResponse(msg: message.Message) {
   message.send({
-    poster: msg.sender,
+    poster: msg.getSender(),
     key: 'response'
   }, channel.matchmaking);
 }
