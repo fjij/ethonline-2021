@@ -9,8 +9,9 @@ import * as channel from './channel';
 
 const cryptoRandomString = require('crypto-random-string');
 const base64 = require('base-64');
-
-const symKey = base64.decode("MTM2LDIzMywyNTEsNDMsMSwxNjUsNTUsODEsMjIsMzQsMTEzLDIwOCwxNDMsMTE1LDg4LDE1Nyw1OSwyNTEsMjQxLDk1LDE2MiwxOTMsMjEzLDE4NSwxOTEsNDMsMjQsMTUyLDExNSw5NCw1Miw5OQ==");
+const symKey = Uint8Array.from([244, 113, 77, 232, 208, 27, 87, 163, 150, 148,
+  170, 118, 80, 13, 67, 23, 22, 51, 224, 30, 75, 191, 66, 106, 231, 217, 106,
+  16, 246, 245, 112, 101]);
 
 const NONCE_LENGTH = 32;
 const KEY_NAME = 'super-card-game-session-key';
@@ -41,7 +42,6 @@ export function hasSignature(): boolean {
 async function assertWaku() {
   if (!waku) {
     waku = await Waku.create({ bootstrap: true });
-    waku.relay.addDecryptionKey(symKey);
     console.log('connected to waku');
   }
 }
@@ -119,7 +119,6 @@ export async function send(data: object, channel: channel.Channel) {
     const contentTopic = channel.getContentTopic();
     await assertWaku();
     const wakuMsg = await WakuMessage.fromUtf8String(msg.toString(), contentTopic, {
-      encPublicKey: symKey,
       sigPrivKey: privateKey,
     });
     sent[msg.getNonce()] = true;
