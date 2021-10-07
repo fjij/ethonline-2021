@@ -56,16 +56,16 @@ export function handleMessage(state: State, msg: message.Message): State {
     case 'posting':
     {
       requestMatch(msg);
-      return { key: 'negotiating', other: msg.sender };
+      return { key: 'negotiating', other: msg.getSender() };
     }
     case 'response':
     {
       if (state.key === 'searching'
-        || (state.key === 'negotiating' && state.other === data.other)
+        || (state.key === 'negotiating' && state.other === msg.getSender())
       ) {
         if (data.other === wallet.getAddress()) {
           acceptResponse(msg);
-          return { key: 'found', other: msg.sender };
+          return { key: 'found', other: msg.getSender() };
         }
       }
       return state;
