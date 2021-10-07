@@ -15,10 +15,14 @@ export async function setWalletSignature(signature: string | null) {
   walletSignature = signature;
 }
 
-async function assertWaku() {
+(async () => {
+  waku = await Waku.create({ bootstrap: true });
+  console.log('connected to waku');
+})();
+
+function assertWaku() {
   if (!waku) {
-    waku = await Waku.create({ bootstrap: true });
-    console.log('connected to waku');
+    throw new Error('not connected to waku');
   }
 }
 
@@ -70,12 +74,12 @@ export class Message {
   }
 }
 
-export async function listen(
+export function listen(
   callback: (msg: Message) => void,
   channel: channel.Channel
-): Promise<() => void> {
+): () => void {
   const contentTopic = channel.getContentTopic();
-  await assertWaku();
+  assertWaku();
   const seen: { [key: string]: boolean } = {};
   const listener = (wakuMsg: WakuMessage) => {
     const signedMsg: crypto.SignedMessage = JSON.parse(wakuMsg.payloadAsUtf8);
@@ -100,7 +104,7 @@ export async function send(data: any, channel: channel.Channel) {
   const msg = new Message(data, wallet.getAddress(), walletSignature);
   const signedMsg = crypto.sign(msg.toString());
   const contentTopic = channel.getContentTopic();
-  await assertWaku();
+  assertWaku();
   const wakuMsg = await WakuMessage.fromUtf8String(JSON.stringify(signedMsg), contentTopic);
   sent[msg.getNonce()] = true;
   await waku.relay.send(wakuMsg);

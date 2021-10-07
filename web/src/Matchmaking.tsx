@@ -6,17 +6,12 @@ export default function Matchmaking() {
   const [lfg, setLfg] = useState(false);
   useEffect(() => {
     if (lfg) {
-      let unsubscribe: () => void;
-
-      message.listen((msg) => {
+      return message.listen((msg) => {
         const match = matchmaking.handleMessage(msg);
         if (match) {
           console.log(match);
         }
-      }, channel.matchmaking)
-        .then(f => unsubscribe = f);
-
-      return () => unsubscribe();
+      }, channel.matchmaking);
     }
   }, [lfg]);
 
