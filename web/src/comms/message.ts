@@ -6,6 +6,7 @@ import * as channel from './channel';
 import * as crypto from './crypto';
 
 const NONCE_BYTES = 24;
+const MESSAGE_LIFETIME = 30*1000;
 
 let waku: Waku;
 const sent: { [key: string]: boolean } = {};
@@ -28,6 +29,7 @@ function assertWaku() {
 
 interface MessageMetadata {
   timestamp: number;
+  expiry: number;
   nonce: string;
   signature: string;
 }
@@ -44,6 +46,7 @@ export class Message {
       timestamp: Date.now(),
       nonce: crypto.b64encode(crypto.randomBytes(NONCE_BYTES)),
       signature,
+      expiry: Date.now() + MESSAGE_LIFETIME
     };
   }
 
@@ -71,6 +74,10 @@ export class Message {
     return this.metadata.timestamp
   }
 
+  isExpired() {
+    return !this.metadata.expiry || Date.now() > this.metadata.expiry;
+  }
+
   getSignature() {
     return this.metadata.signature;
   }
@@ -96,7 +103,7 @@ export function listen(
     const signedMsg: crypto.SignedMessage = JSON.parse(wakuMsg.payloadAsUtf8);
     if (crypto.verify(signedMsg)) {
       const msg = Message.fromString(signedMsg.message);
-      if (msg.verify(signedMsg.publicKey)) {
+      if (msg.verify(signedMsg.publicKey) && !msg.isExpired()) {
         if (!seen[msg.getNonce()] && !sent[msg.getNonce()]) {
           callback(msg);
           seen[msg.getNonce()] = true;
