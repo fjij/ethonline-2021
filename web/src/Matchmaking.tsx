@@ -9,6 +9,7 @@ export default function Matchmaking() {
 
   useEffect(() => {
     if (lfg) {
+      setState({ key: 'searching' });
       return message.listen((msg) => {
         console.log(new Date(msg.getTimestamp()));
         setState(state => matchmaking.handleMessage(state, msg));
