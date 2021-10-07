@@ -16,7 +16,7 @@ export async function setWalletSignature(signature: string | null) {
 }
 
 (async () => {
-  waku = await Waku.create({ bootstrap: true });
+  waku = await Waku.create({ bootstrap: true  });
   console.log('connected to waku');
 })();
 

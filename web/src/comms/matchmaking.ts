@@ -60,7 +60,9 @@ export function handleMessage(state: State, msg: message.Message): State {
     }
     case 'response':
     {
-      if (state.key === 'searching') {
+      if (state.key === 'searching'
+        || (state.key === 'negotiating' && state.other === data.other)
+      ) {
         if (data.other === wallet.getAddress()) {
           acceptResponse(msg);
           return { key: 'found', other: msg.sender };
