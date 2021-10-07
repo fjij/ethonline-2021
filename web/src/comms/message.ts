@@ -1,4 +1,4 @@
-import { Waku, WakuMessage } from 'js-waku';
+import { Waku, WakuMessage, getBootstrapNodes } from 'js-waku';
 import { ethers } from 'ethers';
 
 import { wallet } from '../eth';
@@ -6,6 +6,7 @@ import * as channel from './channel';
 import * as crypto from './crypto';
 
 const NONCE_BYTES = 24;
+const MESSAGE_LIFETIME = 30*1000;
 
 let waku: Waku;
 const sent: { [key: string]: boolean } = {};
@@ -15,32 +16,47 @@ export async function setWalletSignature(signature: string | null) {
   walletSignature = signature;
 }
 
-async function assertWaku() {
+(async () => {
+  waku = await Waku.create({
+    bootstrap: getBootstrapNodes.bind({}, ['fleets', 'wakuv2.test', 'waku-websocket'])
+  });
+  console.log('connected to waku');
+})();
+
+function assertWaku() {
   if (!waku) {
-    waku = await Waku.create({ bootstrap: true });
-    console.log('connected to waku');
+    throw new Error('not connected to waku');
   }
 }
 
-export class Message {
-  data: object;
-  sender: string;
-  signature: string;
+interface MessageMetadata {
+  timestamp: number;
+  expiry: number;
   nonce: string;
+  signature: string;
+}
 
-  constructor(data: object, sender: string, signature: string, nonce?: string) {
+export class Message {
+  data: any;
+  sender: string;
+  metadata: MessageMetadata;
+
+  constructor(data: any, sender: string, signature: string, metadata?: MessageMetadata) {
     this.data = data;
     this.sender = sender;
-    this.signature = signature;
-    this.nonce = nonce ?? crypto.b64encode(crypto.randomBytes(NONCE_BYTES));
+    this.metadata = metadata ?? {
+      timestamp: Date.now(),
+      nonce: crypto.b64encode(crypto.randomBytes(NONCE_BYTES)),
+      signature,
+      expiry: Date.now() + MESSAGE_LIFETIME
+    };
   }
 
   toString() {
     return JSON.stringify({
       data: this.data,
-      signature: this.signature,
-      nonce: this.nonce,
       sender: this.sender,
+      metadata: this.metadata,
     });
   }
 
@@ -53,35 +69,43 @@ export class Message {
   }
 
   getNonce() {
-    return this.nonce;
+    return this.metadata.nonce;
+  }
+
+  getTimestamp() {
+    return this.metadata.timestamp
+  }
+
+  isExpired() {
+    return !this.metadata.expiry || Date.now() > this.metadata.expiry;
   }
 
   getSignature() {
-    return this.signature;
+    return this.metadata.signature;
   }
 
   verify(publicKey: string) {
-    return this.sender === ethers.utils.verifyMessage(publicKey, this.signature);
+    return this.sender === ethers.utils.verifyMessage(publicKey, this.getSignature());
   }
 
   static fromString(str: string): Message {
-    const { data, nonce, signature, sender } = JSON.parse(str);
-    return new Message(data, sender, signature, nonce);
+    const { data, sender, metadata } = JSON.parse(str);
+    return new Message(data, sender, metadata.signature, metadata);
   }
 }
 
-export async function listen(
+export function listen(
   callback: (msg: Message) => void,
   channel: channel.Channel
-): Promise<() => void> {
+): () => void {
   const contentTopic = channel.getContentTopic();
-  await assertWaku();
+  assertWaku();
   const seen: { [key: string]: boolean } = {};
   const listener = (wakuMsg: WakuMessage) => {
     const signedMsg: crypto.SignedMessage = JSON.parse(wakuMsg.payloadAsUtf8);
     if (crypto.verify(signedMsg)) {
       const msg = Message.fromString(signedMsg.message);
-      if (msg.verify(signedMsg.publicKey)) {
+      if (msg.verify(signedMsg.publicKey) && !msg.isExpired()) {
         if (!seen[msg.getNonce()] && !sent[msg.getNonce()]) {
           callback(msg);
           seen[msg.getNonce()] = true;
@@ -93,14 +117,14 @@ export async function listen(
   return () => waku.relay.deleteObserver(listener, [contentTopic]);
 }
 
-export async function send(data: object, channel: channel.Channel) {
+export async function send(data: any, channel: channel.Channel) {
   if (!walletSignature) {
     throw new Error('no signature');
   }
   const msg = new Message(data, wallet.getAddress(), walletSignature);
   const signedMsg = crypto.sign(msg.toString());
   const contentTopic = channel.getContentTopic();
-  await assertWaku();
+  assertWaku();
   const wakuMsg = await WakuMessage.fromUtf8String(JSON.stringify(signedMsg), contentTopic);
   sent[msg.getNonce()] = true;
   await waku.relay.send(wakuMsg);

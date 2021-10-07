@@ -25,7 +25,7 @@ export async function connectWallet() {
   const ethereum = window.ethereum;
   if (ethereum) {
     try {
-      await ethereum.enable();
+      await ethereum.request({ method: 'eth_requestAccounts' });
       const provider = new ethers.providers.Web3Provider(ethereum);
       signer = provider.getSigner();
       address = await signer.getAddress();
