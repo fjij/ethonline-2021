@@ -10,18 +10,15 @@ const MESSAGE_LIFETIME = 30*1000;
 
 let waku: Waku;
 const sent: { [key: string]: boolean } = {};
-let walletSignature: null | string = null;
+let walletSignature: string;
 
-export async function setWalletSignature(signature: string | null) {
-  walletSignature = signature;
-}
-
-(async () => {
+export async function init(signer: ethers.providers.JsonRpcSigner) {
+  walletSignature = (await signer.signMessage(crypto.getPublicKey())).toString();
   waku = await Waku.create({
     bootstrap: getBootstrapNodes.bind({}, ['fleets', 'wakuv2.test', 'waku-websocket'])
   });
   console.log('connected to waku');
-})();
+}
 
 function assertWaku() {
   if (!waku) {
@@ -98,8 +95,8 @@ export function listen(
   callback: (msg: Message) => void,
   channel: channel.Channel
 ): () => void {
-  const contentTopic = channel.getContentTopic();
   assertWaku();
+  const contentTopic = channel.getContentTopic();
   const seen: { [key: string]: boolean } = {};
   const listener = (wakuMsg: WakuMessage) => {
     const signedMsg: crypto.SignedMessage = JSON.parse(wakuMsg.payloadAsUtf8);
@@ -118,13 +115,10 @@ export function listen(
 }
 
 export async function send(data: any, channel: channel.Channel) {
-  if (!walletSignature) {
-    throw new Error('no signature');
-  }
+  assertWaku();
   const msg = new Message(data, wallet.getAddress(), walletSignature);
   const signedMsg = crypto.sign(msg.toString());
   const contentTopic = channel.getContentTopic();
-  assertWaku();
   const wakuMsg = await WakuMessage.fromUtf8String(JSON.stringify(signedMsg), contentTopic);
   sent[msg.getNonce()] = true;
   await waku.relay.send(wakuMsg);
