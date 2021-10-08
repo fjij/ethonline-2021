@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import useInterval from './hooks/useInterval';
-import { message, channel, matchmaking } from './comms';
+import useInterval from '../hooks/useInterval';
+import { message, channel, matchmaking } from '../comms';
 
 export default function Matchmaking() {
 

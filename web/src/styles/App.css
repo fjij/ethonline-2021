@@ -1,0 +1,47 @@
+.app {
+  text-align: center;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.heading {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+body {
+  background: #eee;
+}
+
+button {
+  background-color: #ffd600;
+  padding: 10px 24px;
+  border-radius: 12px;
+  border: none;
+  cursor:pointer;
+  margin-top: 10px;
+}
+
+.blocky-header {
+  margin: 1rem;
+  padding: 1rem 1.5rem 0.5rem 1.5rem;
+  color: black;
+  border-style: solid;
+  background-color: white;
+  text-transform: uppercase;
+}
+
+.blocky {
+  margin: 1rem;
+  padding: 0.5rem 0.5rem 0.3rem 0.5rem;
+  margin-left: 0px;
+  margin-right: 0px;
+  color: black;
+  border-style: solid;
+  background-color: white;
+  text-transform: uppercase;
+}

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { message, crypto } from '../comms';
+import { message } from '../comms';
 import * as contract from './contract';
 
 let signer: ethers.providers.JsonRpcSigner;

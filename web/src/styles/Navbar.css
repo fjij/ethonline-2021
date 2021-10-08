@@ -1,0 +1,12 @@
+.navbar {
+  display: flex;
+  justify-content: center;
+}
+
+.navbar-link {
+  margin: 1rem;
+  padding: 1rem 1.5rem 0.5rem 1.5rem;
+  color: black;
+  border-style: solid;
+  background-color: white;
+}
