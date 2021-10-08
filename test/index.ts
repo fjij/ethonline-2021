@@ -37,11 +37,36 @@ describe("Cards", () => {
     expect(await cards.balanceOf(await owner.getAddress(), 0)).to.equal(0);
   });
 
+  it("Should mint and burn batches", async () => {
+    const [owner] = await ethers.getSigners()
+
+    const Cards = await ethers.getContractFactory('Cards');
+    const cards = await Cards.deploy('uri', 2);
+    await cards.deployed();
+
+    const address = await owner.getAddress()
+
+    expect((await cards.balanceOfBatch([address, address], [0, 1]))
+      .map((x: any) => x.toNumber())).to.eql([0, 0]);
+
+    await cards.mintBatch([0, 1], [2, 3]);
+
+    expect((await cards.balanceOfBatch([address, address], [0, 1]))
+      .map((x: any) => x.toNumber())).to.eql([2, 3]);
+
+    await cards.burnBatch([0, 1], [1, 1]);
+
+
+    expect((await cards.balanceOfBatch([address, address], [0, 1]))
+      .map((x: any) => x.toNumber())).to.eql([1, 2]);
+  });
+
   it("Should fail to mint non-existent cards", async () => {
     const Cards = await ethers.getContractFactory('Cards');
     const cards = await Cards.deploy('uri', 2);
     await cards.deployed();
 
     await expect(cards.mint(3)).to.be.revertedWith('Card does not exist');
+    await expect(cards.mintBatch([0, 4], [1, 1])).to.be.revertedWith('Card does not exist');
   });
 });

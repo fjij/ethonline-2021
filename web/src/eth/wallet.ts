@@ -1,8 +1,10 @@
 import { ethers } from 'ethers';
 import { message, crypto } from '../comms';
+import * as contract from './contract';
 
-let signer: null | ethers.providers.JsonRpcSigner = null;
+let signer: ethers.providers.JsonRpcSigner;
 let address: string;
+let connected: boolean = false;
 
 export function hasEthereum(): boolean {
   // @ts-ignore window.ethereum
@@ -10,7 +12,11 @@ export function hasEthereum(): boolean {
 }
 
 export function isConnected(): boolean {
-  return !!signer;
+  return (!!signer) && (!!address) && connected;
+}
+
+export function getSigner(): ethers.providers.JsonRpcSigner {
+  return signer;
 }
 
 export function getAddress(): string {
@@ -27,24 +33,18 @@ export async function connectWallet() {
     try {
       await ethereum.request({ method: 'eth_requestAccounts' });
       const provider = new ethers.providers.Web3Provider(ethereum);
+
       signer = provider.getSigner();
       address = await signer.getAddress();
-      const signature = await requestSignature(crypto.getPublicKey());
-      message.setWalletSignature(signature);
-    } catch {
-      console.error('Wallet not connected.');
-    }
-  }
-}
 
-export async function requestSignature(text: string): Promise<string | null> {
-  if (signer) {
-    try {
-      const sig = await signer.signMessage(text);
-      return sig.toString();
-    } catch {
-      return null;
+      // Initialize friends
+      await contract.init(signer);
+      await message.init(signer);
+
+      connected = true;
+    } catch(e) {
+      console.error('Wallet not connected.');
+      console.error(e);
     }
   }
-  return null;
 }
