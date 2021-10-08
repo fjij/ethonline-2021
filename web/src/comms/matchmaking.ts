@@ -1,9 +1,6 @@
 import { wallet } from '../eth';
 import * as message from './message';
 import * as channel from './channel';
-import * as crypto from './crypto';
-
-const GAME_ID_BYTES = 16;
 
 interface StateNone {
   key: 'none'
@@ -21,7 +18,6 @@ interface StateNegotiating {
 interface StateFound {
   key: 'found';
   other: string;
-  id: string;
 };
 
 export type State = StateNone
@@ -51,7 +47,6 @@ interface MatchResponse {
 interface MatchAccept {
   key: 'accept';
   other: string;
-  id: string;
 }
 
 export function handleMessage(state: State, msg: message.Message): State {
@@ -72,9 +67,8 @@ export function handleMessage(state: State, msg: message.Message): State {
         || (state.key === 'negotiating' && state.other === msg.getSender())
       ) {
         if (data.other === wallet.getAddress()) {
-          const id = crypto.b64encode(crypto.randomBytes(GAME_ID_BYTES));
-          acceptResponse(msg, id);
-          return { key: 'found', other: msg.getSender(), id };
+          acceptResponse(msg);
+          return { key: 'found', other: msg.getSender() };
         }
       }
       return state;
@@ -84,7 +78,7 @@ export function handleMessage(state: State, msg: message.Message): State {
       if (state.key === 'negotiating') {
         if (msg.getSender() === state.other) {
           if (data.other === wallet.getAddress()) {
-            return { key: 'found', other: msg.getSender(), id: data.id };
+            return { key: 'found', other: msg.getSender() };
           } else {
             // They have accepted someone else
             return { key: 'searching' };
@@ -105,11 +99,10 @@ function requestMatch(msg: message.Message) {
   message.send(data, channel.matchmaking);
 }
 
-function acceptResponse(msg: message.Message, id: string) {
+function acceptResponse(msg: message.Message) {
   const data: MatchData= {
     other: msg.getSender(),
     key: 'accept',
-    id,
   };
   message.send(data, channel.matchmaking);
 }
