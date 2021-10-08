@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface Card {
   id: number;
   name: string;
@@ -9,13 +11,12 @@ interface Card {
 
 const cards: Card[] = [];
 
-function App() {
+export default function MyCollection() {
   return (
     <>
       <div className="heading">
         <h1>Card Collection</h1>
       </div>
-      <Collection />;
     </>
   );
 }
@@ -25,14 +26,12 @@ const Collection = () => {
     <section className="collection">
       {cards.map((card) => {
         return <CardLoader {...card}></CardLoader>;
-        console.log("hi");
       })}
     </section>
   );
 };
 
 const CardLoader = (props: Card) => {
-  console.log(props);
   const { id, name, image, attack, points, description } = props;
   return (
     <article className="card">
@@ -44,5 +43,3 @@ const CardLoader = (props: Card) => {
     </article>
   );
 };
-
-export default App;
