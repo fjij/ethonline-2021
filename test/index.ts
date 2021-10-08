@@ -47,18 +47,18 @@ describe("Cards", () => {
     const address = await owner.getAddress()
 
     expect((await cards.balanceOfBatch([address, address], [0, 1]))
-      .map(x => x.toNumber())).to.eql([0, 0]);
+      .map((x: any) => x.toNumber())).to.eql([0, 0]);
 
     await cards.mintBatch([0, 1], [2, 3]);
 
     expect((await cards.balanceOfBatch([address, address], [0, 1]))
-      .map(x => x.toNumber())).to.eql([2, 3]);
+      .map((x: any) => x.toNumber())).to.eql([2, 3]);
 
     await cards.burnBatch([0, 1], [1, 1]);
 
 
     expect((await cards.balanceOfBatch([address, address], [0, 1]))
-      .map(x => x.toNumber())).to.eql([1, 2]);
+      .map((x: any) => x.toNumber())).to.eql([1, 2]);
   });
 
   it("Should fail to mint non-existent cards", async () => {
