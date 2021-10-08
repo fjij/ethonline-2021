@@ -1,0 +1,64 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.headings {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.center {
+  text-align: center;
+}
+
+
+.card {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 20px;
+}
+
+.card img:hover {
+  transform: scale(1.1);
+}
+
+.card img {
+  transition: transform .2s;
+  border: 20px solid #555;
+  border-radius: 10px;
+  height: 400px;
+  width: 300px;
+}
+
+.links {
+  display: grid;
+  grid-template-columns: 375px 375px 375px;
+  grid-auto-flow: row;
+  justify-content: center;
+  grid-gap: 1em;
+}
+
+p {
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight:bold;
+}
+
+.spacing {
+  padding-top: 20px;
+}
+
+.links a:visited {
+  color: black;
+}
+
+a,
+a:link,
+a:visited,
+a:hover,
+a:active{
+    text-decoration: none;
+}
