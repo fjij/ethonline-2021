@@ -21,8 +21,8 @@ export async function balanceOf(address: string, id: number): Promise<number> {
   return (await contract.balanceOf(address, id)).toNumber();
 }
 
-export async function balanceOfBatch(address: string, id: number): Promise<number> {
-  return (await contract.balanceOf(address, id))
+export async function balanceOfBatch(address: string, ids: number[]): Promise<number[]> {
+  return (await contract.balanceOfBatch(Array(ids.length).fill(address), ids))
     .map((x: ethers.BigNumber) => x.toNumber());
 }
 
@@ -30,6 +30,14 @@ export async function mint(id: number): Promise<void> {
   await contract.mint(id);
 }
 
+export async function mintBatch(ids: number[], amounts: number[]): Promise<void> {
+  await contract.mintBatch(ids, amounts);
+}
+
 export async function burn(id: number): Promise<void> {
   await contract.burn(id);
+}
+
+export async function burnBatch(ids: number[], amounts: number[]): Promise<void> {
+  await contract.burnBatch(ids, amounts);
 }
