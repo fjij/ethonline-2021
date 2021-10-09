@@ -92,6 +92,7 @@ function markReceived(state: SyncState): SyncState {
 }
 
 function handleTurnStatusUpdate(state: SyncState): SyncState {
+  console.log('turn status update:', state.status);
   if (state.status.sent && state.status.received) {
     return handleTurnUpdate({
       ...state,
@@ -113,10 +114,11 @@ function verifySaltedData(hash: string, saltedData: SaltedData) {
 }
 
 function handleTurnUpdate(state: SyncState): SyncState {
+  console.log('turn update:', state.turn);
   if (state.turn.phase === 'reveal' && state.data.move) {
     const data: MoveReveal = { key: 'reveal', turn: state.turn, move: state.data.move };
     send(state, data);
-    return state;
+    return markSent(state);
   } else if (state.turn.phase === 'setup' && state.data.move && state.data.otherMove && state.data.otherHash ) {
     verifySaltedData(state.data.otherHash, state.data.otherMove);
     state.onMoves(state.data.move.data, state.data.otherMove.data);
