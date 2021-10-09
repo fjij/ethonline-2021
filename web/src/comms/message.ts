@@ -7,6 +7,7 @@ import * as crypto from './crypto';
 
 const NONCE_BYTES = 24;
 const MESSAGE_LIFETIME = 30*1000;
+const REPEAT_DELAY = 500;
 
 let waku: Waku;
 const sent: { [key: string]: boolean } = {};
@@ -114,12 +115,20 @@ export function listen(
   return () => waku.relay.deleteObserver(listener, [contentTopic]);
 }
 
-export async function send(data: any, channel: channel.Channel) {
+export function send(data: any, channel: channel.Channel, repeat: number = 0) {
   assertWaku();
   const msg = new Message(data, wallet.getAddress(), walletSignature);
   const signedMsg = crypto.sign(msg.toString());
   const contentTopic = channel.getContentTopic();
-  const wakuMsg = await WakuMessage.fromUtf8String(JSON.stringify(signedMsg), contentTopic);
-  sent[msg.getNonce()] = true;
-  await waku.relay.send(wakuMsg);
+  const text = JSON.stringify(signedMsg);
+  async function sendRecursive(repeat: number) {
+    if (repeat < 0) {
+      return;
+    }
+    const wakuMsg = await WakuMessage.fromUtf8String(text, contentTopic);
+    sent[msg.getNonce()] = true;
+    waku.relay.send(wakuMsg);
+    setTimeout(() => sendRecursive(repeat - 1), REPEAT_DELAY);
+  }
+  sendRecursive(repeat);
 }
