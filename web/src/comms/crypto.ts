@@ -6,6 +6,12 @@ const ec = new EC('ed25519');
 
 const key = ec.genKeyPair();
 
+const SALT_BYTES = 12;
+
+export function generateSalt() {
+  return b64encode(randomBytes(SALT_BYTES));
+}
+
 export function hash(str: string): string {
   return keccak256(str).toString('hex');
 }

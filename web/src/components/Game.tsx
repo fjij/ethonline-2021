@@ -1,67 +1,89 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { message, channel, game } from '../comms';
+import Card from './Card';
+import { channel, crypto } from '../comms';
+import { card, wallet } from '../eth';
+import { interactions } from '../game';
+import useSync from '../hooks/useSync';
+
+const gen = require('random-seed');
+
+const SEED_BYTES = 12;
+
+interface Move {
+  id: number;
+  seed: string;
+}
 
 export default function Game() {
 
   const { other }: any = useParams();
 
-  const [_, setSyncState] = useState(game.baseState(other, onMoves));
+  const addresses = [wallet.getAddress(), other];
+  addresses.sort();
+  const isFirst = addresses[0] === wallet.getAddress();
+
   const [text, setText] = useState('');
   const [canMove, setCanMove] = useState(true);
+  const [myCard, setMyCard] = useState<number | undefined>();
+  const [otherCard, setOtherCard] = useState<number | undefined>();
 
-  useEffect(() => {
-    return message.listen((msg) => {
-      setSyncState(state => game.handleMessage(state, msg));
-    }, channel.CreateGameChannel(other));
-  }, []);
+  const playMove = useSync(onMoves, channel.CreateGameChannel(other), other);
 
-  function onMoves(move: any, otherMove: any) {
-    let str = `fight! ${move} vs ${otherMove} -- `;
-    if (move === otherMove) {
-      str += 'tie.';
-    } else if (move === 'rock') {
-      if (otherMove === 'scissors')  {
-        str += 'win!';
-      } else {
-        str += 'lose...';
-      }
-    } else if (move === 'paper') {
-      if (otherMove === 'rock')  {
-        str += 'win!';
-      } else {
-        str += 'lose...';
-      }
+  async function onMoves(move: Move, otherMove: Move) {
+    setOtherCard(otherMove.id);
+    const [cardData, otherCardData] = await Promise.all([
+      card.getCardData(move.id), card.getCardData(otherMove.id),
+    ]);
+    const seed = isFirst ?
+      `${move.seed}${otherMove.seed}` : `${otherMove.seed}${move.seed}`;
+    const randInt = gen.create(seed);
+    const result = interactions.computeInteraction(
+      cardData.power, cardData.keywords,
+      otherCardData.power, otherCardData.keywords,
+      isFirst, randInt);
+    if (result.won) {
+      setText('you\'re winner!');
     } else {
-      if (otherMove === 'paper')  {
-        str += 'win!';
-      } else {
-        str += 'lose...';
-      }
+      setText('you\'re NOT winner!');
     }
-    setText(str);
     setCanMove(true);
   }
 
-  function play(move: string) {
-    setSyncState(state => game.playMove(state, move));
-    setText(`you played ${move}`);
+  function play(id: number) {
+    setMyCard(id);
+    const move: Move = {
+      id,
+      seed: crypto.b64encode(crypto.randomBytes(SEED_BYTES))
+    }
+    playMove(move);
+    setText(`you played card ${id}`);
     setCanMove(false);
   }
 
   return (
     <div className="game">
-      <h1>Game</h1>
-      <div>
-        <button onClick={() => play('rock')} disabled={!canMove}>rock</button>
-        <button onClick={() => play('paper')} disabled={!canMove}>paper</button>
-        <button onClick={() => play('scissors')} disabled={!canMove}>scissors</button>
-      </div>
-      <br />
+      <h1>FIGHT</h1>
       <div>
         <p>{ text }</p>
+        {
+          myCard && <Card id={myCard} />
+        }
+        <span> vs </span>
+        {
+          otherCard && <Card id={otherCard} />
+        }
       </div>
+      <br />
+      { canMove &&
+        <div>
+          <h1>Choose a card</h1>
+          { Array.from(Array(43).keys()).map(id => 
+            <Card onClick={() => play(id)} id={id} key={id} />)
+          }
+        </div>
+      }
     </div>
   );
 }

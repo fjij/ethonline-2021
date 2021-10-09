@@ -51,8 +51,7 @@ export default function Matchmaking() {
     <div className="matchmaking">
       { lfg ?
         <>
-          <p>{ 'Searching for game...' }</p>
-          <p>{ JSON.stringify(state, null, 2) }</p>
+          <p>{ state.key }</p>
           <button onClick={ () => setLfg(false) }> Stop</button>
         </>:
         <>

@@ -2,7 +2,7 @@ import * as message from './message';
 import * as channel from './channel';
 import * as crypto from './crypto';
 
-const SALT_BYTES = 12;
+const stringify = require('json-stringify-deterministic');
 
 export interface SaltedData {
   data: any;
@@ -13,7 +13,6 @@ interface Turn {
   num: number;
   phase: 'setup' | 'reveal';
 }
-
 
 export interface SyncState {
   turn: Turn,
@@ -27,7 +26,10 @@ export interface SyncState {
     otherHash: string | null;
     otherMove: SaltedData | null;
   };
-  onMoves: (move: any, otherMove: any) => void;
+  todo: {
+    outgoing: (MoveSetup | MoveReveal)[],
+    turns: { move: any, otherMove: any }[]
+  };
 }
 
 interface MoveSetup {
@@ -42,13 +44,13 @@ interface MoveReveal {
   move: SaltedData;
 }
 
-export function baseState(other: string, onMoves: (move: any, otherMove: any) => void): SyncState {
+export function baseState(other: string): SyncState {
   return {
     turn: { num: 0, phase: 'setup' },
     other,
     status: { sent: false, received: false },
     data: { move: null, otherHash: null, otherMove: null },
-    onMoves
+    todo: { outgoing: [], turns: [] },
   }
 }
 
@@ -56,19 +58,17 @@ export function playMove(state: SyncState, move: any): SyncState {
   if (state.status.sent || state.turn.phase !== 'setup') {
     return state;
   }
-  const salt = crypto.b64encode(crypto.randomBytes(SALT_BYTES));
-  const saltedData: SaltedData = { data: move, salt };
+  const saltedData: SaltedData = { data: move, salt: crypto.generateSalt() };
   const data: MoveSetup = {
     key: 'setup',
-    hash: crypto.hash(JSON.stringify(saltedData)),
+    hash: crypto.hash(stringify(saltedData)),
     turn: state.turn,
   }
-  send(state, data);
-  return markSent({ ...state, data: { ...state.data, move: saltedData } });
+  return markSent(send({ ...state, data: { ...state.data, move: saltedData } }, data));
 }
 
 export function handleMessage(state: SyncState, msg: message.Message): SyncState {
-  if (msg.sender !== state.other) {
+  if (msg.getSender() !== state.other) {
     return state;
   }
   const data: MoveSetup | MoveReveal = msg.getData();
@@ -83,7 +83,13 @@ export function handleMessage(state: SyncState, msg: message.Message): SyncState
 }
 
 function send(state: SyncState, data: MoveReveal | MoveSetup) {
-  message.send(data, channel.CreateGameChannel(state.other), 1);
+  return {
+    ...state,
+    todo: {
+      ...state.todo,
+      outgoing: [...state.todo.outgoing, data]
+    }
+  };
 }
 
 function markSent(state: SyncState): SyncState {
@@ -95,7 +101,6 @@ function markReceived(state: SyncState): SyncState {
 }
 
 function handleTurnStatusUpdate(state: SyncState): SyncState {
-  console.log('turn status update:', state.status);
   if (state.status.sent && state.status.received) {
     return handleTurnUpdate({
       ...state,
@@ -111,23 +116,29 @@ function handleTurnStatusUpdate(state: SyncState): SyncState {
 }
 
 function verifySaltedData(hash: string, saltedData: SaltedData) {
-  if (crypto.hash(JSON.stringify(saltedData)) !== hash) {
+  if (crypto.hash(stringify(saltedData)) !== hash) {
     throw new Error('salted data could not be verified');
   }
 }
 
 function handleTurnUpdate(state: SyncState): SyncState {
-  console.log('turn update:', state.turn);
   if (state.turn.phase === 'reveal' && state.data.move) {
     const data: MoveReveal = { key: 'reveal', turn: state.turn, move: state.data.move };
-    send(state, data);
-    return markSent(state);
+    return markSent(send(state, data));
   } else if (state.turn.phase === 'setup' && state.data.move && state.data.otherMove && state.data.otherHash ) {
     verifySaltedData(state.data.otherHash, state.data.otherMove);
-    state.onMoves(state.data.move.data, state.data.otherMove.data);
-    return { ...state, data: { move: null, otherMove: null, otherHash: null } };
+    return {
+      ...state,
+      data: { move: null, otherMove: null, otherHash: null }, 
+      todo: {
+        ...state.todo,
+        turns: [...state.todo.turns, {
+          move: state.data.move.data, 
+          otherMove: state.data.otherMove.data }
+        ]
+      }
+    };
   } else {
-    console.log('should not be here');
     return state;
   }
 }
