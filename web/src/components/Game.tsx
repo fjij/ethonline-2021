@@ -8,7 +8,7 @@ export default function Game() {
   const { other }: any = useParams();
 
   const [_, setSyncState] = useState(game.baseState(other, onMoves));
-  const [logs, setLogs] = useState<{ text: string, id: number }[]>([]);
+  const [text, setText] = useState('');
   const [canMove, setCanMove] = useState(true);
 
   useEffect(() => {
@@ -17,39 +17,36 @@ export default function Game() {
     }, channel.CreateGameChannel(other));
   }, []);
 
-  function addLog(text: string) {
-    setLogs(logs => [...logs, { text, id: logs.length }]);
-  }
-
   function onMoves(move: any, otherMove: any) {
-    addLog(`fight! ${move} vs ${otherMove}`);
+    let str = `fight! ${move} vs ${otherMove} -- `;
     if (move === otherMove) {
-      addLog('tie.');
+      str += 'tie.';
     } else if (move === 'rock') {
       if (otherMove === 'scissors')  {
-        addLog('win!');
+        str += 'win!';
       } else {
-        addLog('lose...');
+        str += 'lose...';
       }
     } else if (move === 'paper') {
       if (otherMove === 'rock')  {
-        addLog('win!');
+        str += 'win!';
       } else {
-        addLog('lose...');
+        str += 'lose...';
       }
     } else {
       if (otherMove === 'paper')  {
-        addLog('win!');
+        str += 'win!';
       } else {
-        addLog('lose...');
+        str += 'lose...';
       }
     }
+    setText(str);
     setCanMove(true);
   }
 
   function play(move: string) {
     setSyncState(state => game.playMove(state, move));
-    addLog(`you played ${move}`);
+    setText(`you played ${move}`);
     setCanMove(false);
   }
 
@@ -63,7 +60,7 @@ export default function Game() {
       </div>
       <br />
       <div>
-        { logs.map(log => <p key={ log.id }>{ log.text }<br /></p>) }
+        <p>{ text }</p>
       </div>
     </div>
   );
