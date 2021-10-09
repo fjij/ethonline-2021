@@ -8,22 +8,20 @@ interface ConnectWalletProps {
 export default function ConnectWallet({
   onConnected,
 }: ConnectWalletProps) {
-  const [isConnected, setConnected] = useState(false);
   const [errorMsg, setErrorMsg] = useState<undefined | string>();
   async function connect() {
     try {
       await wallet.connectWallet();
-      onConnected();
-      setConnected(true);
       setErrorMsg(undefined);
+      onConnected();
     } catch(e: any) {
       setErrorMsg(e.message);
     }
   }
   return (
     <div className="connect-wallet">
-      { !isConnected && <button onClick={connect}>Connect Wallet</button> }
-      { isConnected && <p>Connected</p> }
+      { !wallet.isConnected() && <button onClick={connect}>Connect Wallet</button> }
+      { wallet.isConnected() && <p>Connected</p> }
       { errorMsg && <p>Error: {errorMsg}</p> }
     </div>
   );

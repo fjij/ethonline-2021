@@ -4,12 +4,12 @@ import "./styles/App.css";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 //pages
-import Home from "./components/Home";
-import MyCollection from "./components/MyCollection";
-import Store from "./components/Store";
-import Play from "./components/Play";
-import ConnectWallet from "./components/ConnectWallet";
-import Game from "./components/Game";
+import Home from './components/Home';
+import MyCollection from './components/MyCollection';
+import Store from './components/Store';
+import Play from './components/Play'
+import Game from './components/Game'
+import ConnectWallet from './components/ConnectWallet';
 
 import Navbar from "./components/Navbar";
 
@@ -34,6 +34,9 @@ function App() {
               <Store />
             </Route>
             <Route path="/play">
+              <Play />
+            </Route>
+            <Route path="/game/:other">
               <Game />
             </Route>
           </Switch>

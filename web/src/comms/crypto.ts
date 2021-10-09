@@ -6,6 +6,10 @@ const ec = new EC('ed25519');
 
 const key = ec.genKeyPair();
 
+export function hash(str: string): string {
+  return keccak256(str).toString('hex');
+}
+
 export function b64encode(arr: number[]): string {
   return btoa(String.fromCharCode.apply(null, arr));
 }

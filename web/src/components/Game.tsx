@@ -1,61 +1,67 @@
-import React from "react";
-import "../styles/Game.css";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import { message, channel, game } from '../comms';
 
 export default function Game() {
+
+  const { other }: any = useParams();
+
+  const [_, setSyncState] = useState(game.baseState(other, onMoves));
+  const [text, setText] = useState('');
+  const [canMove, setCanMove] = useState(true);
+
+  useEffect(() => {
+    return message.listen((msg) => {
+      setSyncState(state => game.handleMessage(state, msg));
+    }, channel.CreateGameChannel(other));
+  }, []);
+
+  function onMoves(move: any, otherMove: any) {
+    let str = `fight! ${move} vs ${otherMove} -- `;
+    if (move === otherMove) {
+      str += 'tie.';
+    } else if (move === 'rock') {
+      if (otherMove === 'scissors')  {
+        str += 'win!';
+      } else {
+        str += 'lose...';
+      }
+    } else if (move === 'paper') {
+      if (otherMove === 'rock')  {
+        str += 'win!';
+      } else {
+        str += 'lose...';
+      }
+    } else {
+      if (otherMove === 'paper')  {
+        str += 'win!';
+      } else {
+        str += 'lose...';
+      }
+    }
+    setText(str);
+    setCanMove(true);
+  }
+
+  function play(move: string) {
+    setSyncState(state => game.playMove(state, move));
+    setText(`you played ${move}`);
+    setCanMove(false);
+  }
+
   return (
-    <>
-      <div className="layout">
-        <div className="player2">
-          <div className="player2used">
-            <div className="player2discard">
-              <div className="box"></div>
-            </div>
-            <div className="box"></div>
-          </div>
-          <div className="player2hand">
-            <div className="player2bench">
-              <div className="box"></div>
-              <div className="box"></div>
-              <div className="box"></div>
-              <div className="box"></div>
-              <div className="player2back">
-                <div className="box"></div>
-              </div>
-            </div>
-          </div>
-          <div className="player2deck">
-            <div className="box"></div>
-          </div>
-        </div>
-        <div className="player-play">
-          <div className="left-player">
-            <div className="box-play"></div>
-          </div>
-          <div className="box-play"></div>
-        </div>
-        <div className="player2">
-          <div className="player2used">
-            <div className="player2discard">
-              <div className="box"></div>
-            </div>
-            <div className="box"></div>
-          </div>
-          <div className="player2hand">
-            <div className="player2bench">
-              <div className="box"></div>
-              <div className="box"></div>
-              <div className="box"></div>
-              <div className="box"></div>
-              <div className="player2back">
-                <div className="box"></div>
-              </div>
-            </div>
-          </div>
-          <div className="player2deck">
-            <div className="box"></div>
-          </div>
-        </div>
+    <div className="game">
+      <h1>Game</h1>
+      <div>
+        <button onClick={() => play('rock')} disabled={!canMove}>rock</button>
+        <button onClick={() => play('paper')} disabled={!canMove}>paper</button>
+        <button onClick={() => play('scissors')} disabled={!canMove}>scissors</button>
       </div>
-    </>
+      <br />
+      <div>
+        <p>{ text }</p>
+      </div>
+    </div>
   );
 }
