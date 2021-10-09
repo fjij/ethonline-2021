@@ -23,7 +23,7 @@ export default function Game() {
 
   const { other }: any = useParams();
 
-  const [_, setSyncState] = useState(game.baseState(other, onMoves));
+  const [syncState, setSyncState] = useState(game.baseState(other));
   const [text, setText] = useState('');
   const [canMove, setCanMove] = useState(true);
   const [myCard, setMyCard] = useState<number | undefined>();
@@ -34,6 +34,32 @@ export default function Game() {
       setSyncState(state => game.handleMessage(state, msg));
     }, channel.CreateGameChannel(other));
   }, []);
+
+  useEffect(() => {
+    if (syncState.todo.outgoing.length > 0) {
+      setSyncState(state => {
+        state.todo.outgoing.forEach(data => {
+          message.send(data, channel.CreateGameChannel(other));
+        });
+        return { ...state, todo: { ...state.todo, outgoing: [] } };
+      });
+    }
+  }, [syncState.todo.outgoing]);
+
+  useEffect(() => {
+    if (syncState.todo.turns.length > 0) {
+      setSyncState(state => {
+        state.todo.turns.forEach(turn => {
+          onMoves(turn.move, turn.otherMove);
+        });
+        return { ...state, todo: { ...state.todo, turns: [] } };
+      });
+    }
+  }, [syncState.todo.turns]);
+  
+  useEffect(() => {
+    console.log('syncState updated - salt: ', syncState);
+  }, [syncState]);
 
   async function onMoves(move: Move, otherMove: Move) {
     setOtherCard(otherMove.id);
@@ -60,7 +86,11 @@ export default function Game() {
       id,
       seed: crypto.b64encode(crypto.randomBytes(SEED_BYTES))
     }
-    setSyncState(state => game.playMove(state, move));
+    setSyncState(state => {
+      const newState = game.playMove(state, move)
+      console.log(newState.data.move?.salt);
+      return newState
+    });
     setText(`you played card ${id}`);
     setCanMove(false);
   }
