@@ -124,6 +124,7 @@ function handleTurnUpdate(state: SyncState): SyncState {
   console.log('turn update:', state.turn);
   if (state.turn.phase === 'reveal' && state.data.move) {
     const data: MoveReveal = { key: 'reveal', turn: state.turn, move: state.data.move };
+    console.log('revealing move:', data.move);
     send(state, data);
     return markSent(state);
   } else if (state.turn.phase === 'setup' && state.data.move && state.data.otherMove && state.data.otherHash ) {
