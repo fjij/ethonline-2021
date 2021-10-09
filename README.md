@@ -1,46 +1,97 @@
-# Advanced Sample Hardhat Project
+# super-card-game
 
-This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
+EXTREMELY COOL CARD GAME
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
+## Requirements
 
-Try running some of the following tasks:
+- Node 14 (can be installed with [nvm](https://github.com/nvm-sh/nvm))
+- [Metamask](https://metamask.io) installed in your browser
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
+## Ethereuem/IPFS Side
+
+### Install
+
+```bash
+npm install
 ```
 
-# Etherscan verification
+### Uploading Image Metadata to IPFS
 
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
+Get an API key from (nft.storage)[https://nft.storage] and either save
+it to a file named `.env` or use it as an environment variable.
 
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
-
-```shell
-hardhat run --network ropsten scripts/sample-script.ts
+**`.env`**
+```
+NFT_STORAGE_API_KEY="your api key here"
 ```
 
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
-
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
+```bash
+npm run upload-cards
 ```
 
-# Performance optimizations
+### Running local node
 
-For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+```bash
+npm run node
+```
+
+### Deploy NFT to local node
+
+With the local node running in a separate terminal:
+
+ ```bash
+ npm run deploy
+ ```
+
+As long as this command is running, the local node is running. Once you close
+the terminal or stop it with Ctrl-C, the local node is stopped.
+
+Take note of the accounts listed and their private keys. You can use one of them
+later if you need an account with a lot of funds.
+
+## Web Side
+
+```bash
+cd ./web
+```
+
+### Install
+
+```bash
+npm install
+```
+
+### Start React Server
+
+With the local node running in a separate terminal and the NFT deployed:
+
+```bash
+npm start
+```
+
+## Metamask Setup
+
+You should have a local node running prior to this.
+
+### Change the chain id of Localhost 8485 to 31337
+
+- Click the metamask extension
+- Account button (circle) on the top right
+- Settings
+- Networks
+- Localhost 8485
+- Change chain id to 31337
+- Save
+
+### Switch chain to Localhost 8485
+
+- Click the metamask extension
+- Dropdown that says 'Ethereuem Mainnet'
+- Switch to Localhost 8485
+
+### Use an account with a lot of funds
+
+- Click the metamask extension
+- Account button (circle) on the top right
+- Import account
+- Paste a private key from when you first ran the local node
