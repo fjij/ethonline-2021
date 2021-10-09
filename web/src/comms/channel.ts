@@ -1,3 +1,5 @@
+import { wallet } from '../eth';
+
 const APP = 'super-card-game';
 const VERSION = 1;
 const ENCODING = 'json';
@@ -28,6 +30,8 @@ export class Channel {
 
 export const matchmaking = new Channel({ key: 'matchmaking' });
 
-export function CreateGameChannel(id: string) {
-  return new Channel({ key: 'game', id });
+export function CreateGameChannel(other: string) {
+  const addresses = [wallet.getAddress(), other];
+  addresses.sort();
+  return new Channel({ key: 'game', id: addresses.join('-') });
 }

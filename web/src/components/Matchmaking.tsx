@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import useInterval from '../hooks/useInterval';
 import { message, channel, matchmaking } from '../comms';
 
@@ -9,6 +10,8 @@ export default function Matchmaking() {
   const [lfg, setLfg] = useState(false);
   const [state, setState] = useState<matchmaking.State>({ key: 'none' });
   const [negotiationCounter, setNegotiationCounter] = useState(0);
+
+  const history = useHistory();
 
   useEffect(() => {
     if (lfg) {
@@ -21,7 +24,7 @@ export default function Matchmaking() {
     } else {
       setState({ key: 'none' });
     }
-  }, [lfg],);
+  }, [lfg]);
 
   useInterval(() => {
     if (lfg) {
@@ -37,6 +40,12 @@ export default function Matchmaking() {
       }
     }
   }, 3000);
+
+  useEffect(() => {
+    if (state.key === 'found') {
+      history.push(`/game/${state.other}`);
+    }
+  }, [state.key]);
 
   return (
     <div className="matchmaking">

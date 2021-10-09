@@ -8,6 +8,7 @@ import Home from './components/Home';
 import MyCollection from './components/MyCollection';
 import Store from './components/Store';
 import Play from './components/Play'
+import Game from './components/Game'
 import ConnectWallet from './components/ConnectWallet';
 
 import Navbar from './components/Navbar';
@@ -37,6 +38,9 @@ function App() {
             </Route>
             <Route path="/play">
               <Play />
+            </Route>
+            <Route path="/game/:other">
+              <Game />
             </Route>
           </Switch>
         }
