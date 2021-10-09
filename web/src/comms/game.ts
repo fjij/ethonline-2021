@@ -83,7 +83,7 @@ export function handleMessage(state: SyncState, msg: message.Message): SyncState
 }
 
 function send(state: SyncState, data: MoveReveal | MoveSetup) {
-  message.send(data, channel.CreateGameChannel(state.other));
+  message.send(data, channel.CreateGameChannel(state.other), 1);
 }
 
 function markSent(state: SyncState): SyncState {
