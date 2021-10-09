@@ -17,9 +17,12 @@ export default function MyCollection() {
     <>
       <div className="heading">
         <h1>Card Collection</h1>
-        <Card id={1} />
-        <Card id={1} />
-        <Card id={1} />
+        <section className="collection">
+          {Array.from(Array(28).keys()).map(id => <div className="collection-slot">
+            <Card id={id} key={id} />
+            <br />
+          </div>)}
+        </section>
       </div>
     </>
   );
