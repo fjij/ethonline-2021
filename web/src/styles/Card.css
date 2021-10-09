@@ -1,0 +1,33 @@
+.card {
+  border: 10px solid #555;
+  border-radius: 8px;
+  height: 200px;
+  width: 150px;
+}
+
+.card-container {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.card-container:hover {
+  transform: scale(1.5);
+}
+
+.card-container:hover .card {
+}
+
+.card-text {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  color: black;
+  opacity: 0%;
+  transition: opacity 0.2s;
+  width: 150px;
+}
+
+.card-container:hover .card-text {
+  opacity: 100%;
+}

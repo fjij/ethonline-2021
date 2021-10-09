@@ -21,17 +21,17 @@ h1 {
   text-align: center;
 }
 
-.card-desc {
+.collection-card-desc {
   text-align: justify;
 }
 
-.card {
+.collection-card {
   background: #ffffff;
   padding: 2rem;
   border-radius: 10px;
 }
 
-.card img {
+.collection-card img {
   border: 10px solid #555;
   border-radius: 10px;
   height: 200px;
@@ -39,7 +39,7 @@ h1 {
   transition: transform 0.2s;
 }
 
-.card img:hover {
+.collection-card img:hover {
   transform: scale(2);
 }
 
