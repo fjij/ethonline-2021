@@ -94,7 +94,7 @@ export function isWinner(
   const rand = gen.create(seed);
   const ownedKeywords = keywords.map(keyword => ({ isOther: false, keyword }));
   const otherOwnedKeywords = otherKeywords.map(keyword => ({ isOther: true, keyword }));
-  const allKeywords: OwnedKeyword[] = isFirst
+  let allKeywords: OwnedKeyword[] = isFirst
     ? [...ownedKeywords, ...otherOwnedKeywords]
     : [...otherOwnedKeywords, ...ownedKeywords];
 
@@ -113,7 +113,7 @@ export function isWinner(
       case 'squelch': {
         if (isOther && stats.immune) break;
         if (!isOther && otherStats.immune) break;
-        allKeywords.filter(ownedKeyword => ownedKeyword.isOther === isOther
+        allKeywords = allKeywords.filter(ownedKeyword => ownedKeyword.isOther === isOther
           || ownedKeyword.keyword.name === 'squelch');
         break;
       }
