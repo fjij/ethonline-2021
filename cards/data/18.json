@@ -1,0 +1,19 @@
+{
+    "name": "Emergency Feline",
+    "description": "Even though he can't fix you up, his cute face will be the last thing you see before you pass.",
+    "image": "18-emergency feline.png",
+    "rarity": "rare",
+    "power": 0,
+    "keywords": [
+        {
+            "name": "empower",
+            "keywords": [
+                {
+                    "name": "plus",
+                    "value": 3
+                }
+            ]
+        }
+    ]
+  }
+  

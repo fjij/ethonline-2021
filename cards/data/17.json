@@ -1,0 +1,22 @@
+{
+    "name": "Barry, the Suspicious Dragon",
+    "description": "His smug face must mean he's hiding something... something in plain sight...",
+    "image": "17-barry dragon.png",
+    "rarity": "ultra",
+    "power": 3,
+    "keywords": [
+        {
+            "name": "squelch"
+        },
+        {
+            "name": "inflict",
+            "keywords": [
+                {
+                    "name": "discard",
+                    "value": 1
+                }
+            ]
+        }
+    ]
+  }
+  

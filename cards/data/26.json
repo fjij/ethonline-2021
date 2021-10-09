@@ -1,0 +1,19 @@
+{
+    "name": "A Nime - Scarlet",
+    "description": "WEEEEEEEEE!",
+    "image": "26-a nime scarlet big.png",
+    "rarity": "ultra",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "empower",
+            "keywords": [
+                {
+                    "name": "draw",
+                    "value": 1
+                }
+            ]
+        }
+    ]
+  }
+  

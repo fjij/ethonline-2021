@@ -1,0 +1,19 @@
+{
+    "name": "Serpent of Calamities",
+    "description": "This guy is really scary. Like REAL scary. Just look at him, he can probably do something kinda bad.",
+    "image": "19-serpent of the end.png",
+    "rarity": "ultra",
+    "power": 0,
+    "keywords": [
+        {
+            "name": "inflict",
+            "keywords": [
+                {
+                    "name": "discard",
+                    "value": 3
+                }
+            ]
+        }
+    ]
+  }
+  

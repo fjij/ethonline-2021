@@ -1,0 +1,19 @@
+{
+    "name": "A Nime - Ms. Paint",
+    "description": "Ms. Paint is really good at art. That's it really.",
+    "image": "24-a nime ms paint.png",
+    "rarity": "common",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "empower",
+            "keywords": [
+                {
+                    "name": "plus",
+                    "value": 1
+                }
+            ]
+        }
+    ]
+  }
+  

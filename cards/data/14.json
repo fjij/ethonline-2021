@@ -1,0 +1,23 @@
+{
+    "name": "High Heels",
+    "description": "Wow! Can she run in those or what! I hope she doesn't fall.",
+    "image": "14-high heel legs.png",
+    "rarity": "common",
+    "power": 4,
+    "keywords": [
+        {
+            "name": "flip",
+            "keywords": [
+                {
+                    "name": "plus",
+                    "value": -1
+                },
+                {
+                    "name": "plus",
+                    "value": -3
+                }
+            ]
+        }
+    ]
+  }
+  
