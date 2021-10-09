@@ -53,6 +53,9 @@ export function baseState(other: string, onMoves: (move: any, otherMove: any) =>
 }
 
 export function playMove(state: SyncState, move: any): SyncState {
+  if (state.status.sent || state.turn.phase !== 'setup') {
+    return state;
+  }
   const salt = crypto.b64encode(crypto.randomBytes(SALT_BYTES));
   const saltedData: SaltedData = { data: move, salt };
   const data: MoveSetup = {
@@ -134,14 +137,14 @@ function turnMatches(state: SyncState, turn: Turn): boolean {
 }
 
 function onSetup(state: SyncState, data: MoveSetup): SyncState {
-  if (!turnMatches(state, data.turn)) {
+  if (!turnMatches(state, data.turn) || state.status.received) {
     return state;
   }
   return markReceived({ ...state, data: { ...state.data, otherHash: data.hash } });
 }
 
 function onReveal(state: SyncState, data: MoveReveal): SyncState {
-  if (!turnMatches(state, data.turn)) {
+  if (!turnMatches(state, data.turn) || state.status.received) {
     return state;
   }
   return markReceived({ ...state, data: { ...state.data, otherMove: data.move } });
