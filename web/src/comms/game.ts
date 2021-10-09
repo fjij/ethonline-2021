@@ -60,6 +60,7 @@ export function playMove(state: SyncState, move: any): SyncState {
   }
   const salt = crypto.b64encode(crypto.randomBytes(SALT_BYTES));
   const saltedData: SaltedData = { data: move, salt };
+  console.log('salting...: ', stringify(saltedData));
   const data: MoveSetup = {
     key: 'setup',
     hash: crypto.hash(stringify(saltedData)),
@@ -113,6 +114,7 @@ function handleTurnStatusUpdate(state: SyncState): SyncState {
 }
 
 function verifySaltedData(hash: string, saltedData: SaltedData) {
+  console.log('verifying: ', stringify(saltedData));
   if (crypto.hash(stringify(saltedData)) !== hash) {
     throw new Error('salted data could not be verified');
   }
