@@ -35,6 +35,12 @@ npm run upload-cards
 npm run node
 ```
 
+As long as this command is running, the local node is running. Once you close
+the terminal or stop it with Ctrl-C, the local node is stopped.
+
+Take note of the accounts listed and their private keys. You can use one of them
+later if you need an account with a lot of funds.
+
 ### Deploy NFT to local node
 
 With the local node running in a separate terminal:
@@ -42,12 +48,6 @@ With the local node running in a separate terminal:
  ```bash
  npm run deploy
  ```
-
-As long as this command is running, the local node is running. Once you close
-the terminal or stop it with Ctrl-C, the local node is stopped.
-
-Take note of the accounts listed and their private keys. You can use one of them
-later if you need an account with a lot of funds.
 
 ## Web Side
 
