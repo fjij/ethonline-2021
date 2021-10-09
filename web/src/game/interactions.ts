@@ -111,8 +111,10 @@ export function isWinner(
         break;
       }
       case 'squelch': {
-        allKeywords.filter(ownedKeyword => ownedKeyword.isOther !== isOther
-          && ownedKeyword.keyword.name !== 'squelch');
+        if (isOther && stats.immune) break;
+        if (!isOther && otherStats.immune) break;
+        allKeywords.filter(ownedKeyword => ownedKeyword.isOther === isOther
+          || ownedKeyword.keyword.name === 'squelch');
         break;
       }
       case 'flip': {
@@ -125,6 +127,8 @@ export function isWinner(
         break;
       }
       case 'inflict': {
+        if (isOther && stats.immune) break;
+        if (!isOther && otherStats.immune) break;
         keyword.keywords
           .forEach(kw => allKeywords.push({ keyword: kw, isOther: !isOther }));
         break;
@@ -150,6 +154,8 @@ export function isWinner(
         break;
       }
       case 'swap': {
+        if (isOther && stats.immune) break;
+        if (!isOther && otherStats.immune) break;
         const temp = stats.power;
         stats.power = otherStats.power;
         otherStats.power = temp;
