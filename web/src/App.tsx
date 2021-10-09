@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import './styles/App.css';
+import React, { useState } from "react";
+import "./styles/App.css";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
@@ -11,30 +11,27 @@ import Play from './components/Play'
 import Game from './components/Game'
 import ConnectWallet from './components/ConnectWallet';
 
-import Navbar from './components/Navbar';
+import Navbar from "./components/Navbar";
 
 function App() {
-
   const [isConnected, setConnected] = useState(false);
   return (
     <div className="app">
       <Router>
         <Navbar />
-        { !isConnected &&
-          <ConnectWallet
-            onConnected={() => setConnected(true)}
-          />
-        }
-        { isConnected &&
+        {!isConnected && (
+          <ConnectWallet onConnected={() => setConnected(true)} />
+        )}
+        {isConnected && (
           <Switch>
             <Route exact path="/">
               <Home />
             </Route>
             <Route path="/myCollection">
-              <MyCollection/>
+              <MyCollection />
             </Route>
             <Route path="/store">
-              <Store/>
+              <Store />
             </Route>
             <Route path="/play">
               <Play />
@@ -43,10 +40,10 @@ function App() {
               <Game />
             </Route>
           </Switch>
-        }
+        )}
       </Router>
     </div>
-  )
+  );
 }
 
 export default App;
