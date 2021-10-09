@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import Card from './Card';
 import { message, channel, game } from '../comms';
+import { card, wallet } from '../eth';
+import { interactions } from '../game';
+
+interface Move {
+  id: number;
+  seed: string;
+}
+
+function isFirst(other: string) {
+  const addresses = [wallet.getAddress(), other];
+  addresses.sort();
+  return addresses[0] === wallet.getAddress();
+}
 
 export default function Game() {
 
@@ -10,6 +24,8 @@ export default function Game() {
   const [_, setSyncState] = useState(game.baseState(other, onMoves));
   const [text, setText] = useState('');
   const [canMove, setCanMove] = useState(true);
+  const [myCard, setMyCard] = useState<number | undefined>();
+  const [otherCard, setOtherCard] = useState<number | undefined>();
 
   useEffect(() => {
     return message.listen((msg) => {
@@ -17,51 +33,54 @@ export default function Game() {
     }, channel.CreateGameChannel(other));
   }, []);
 
-  function onMoves(move: any, otherMove: any) {
-    let str = `fight! ${move} vs ${otherMove} -- `;
-    if (move === otherMove) {
-      str += 'tie.';
-    } else if (move === 'rock') {
-      if (otherMove === 'scissors')  {
-        str += 'win!';
-      } else {
-        str += 'lose...';
-      }
-    } else if (move === 'paper') {
-      if (otherMove === 'rock')  {
-        str += 'win!';
-      } else {
-        str += 'lose...';
-      }
+  async function onMoves(move: Move, otherMove: Move) {
+    setOtherCard(otherMove.id);
+    const [cardData, otherCardData] = await Promise.all([
+      card.getCardData(move.id), card.getCardData(otherMove.id),
+    ]);
+    const seed = isFirst(other) ?
+      `${move.seed}${otherMove.seed}` : `${otherMove.seed}${move.seed}`;
+    const isWinner = interactions.isWinner(
+      cardData.power, cardData.keywords,
+      otherCardData.power, otherCardData.keywords,
+      isFirst(other), seed);
+    if (isWinner) {
+      setText('you\'re winner!');
     } else {
-      if (otherMove === 'paper')  {
-        str += 'win!';
-      } else {
-        str += 'lose...';
-      }
+      setText('you\'re NOT winner!');
     }
-    setText(str);
     setCanMove(true);
   }
 
-  function play(move: string) {
-    setSyncState(state => game.playMove(state, move));
-    setText(`you played ${move}`);
+  function play(id: number) {
+    setMyCard(id);
+    setSyncState(state => game.playMove(state, id));
+    setText(`you played card ${id}`);
     setCanMove(false);
   }
 
   return (
     <div className="game">
-      <h1>Game</h1>
-      <div>
-        <button onClick={() => play('rock')} disabled={!canMove}>rock</button>
-        <button onClick={() => play('paper')} disabled={!canMove}>paper</button>
-        <button onClick={() => play('scissors')} disabled={!canMove}>scissors</button>
-      </div>
-      <br />
+      <h1>FIGHT</h1>
       <div>
         <p>{ text }</p>
+        {
+          myCard && <Card id={myCard} />
+        }
+        <span> vs </span>
+        {
+          otherCard && <Card id={otherCard} />
+        }
       </div>
+      <br />
+      { canMove &&
+        <div>
+          <h1>Choose a card</h1>
+          { Array.from(Array(43).keys()).map(id => 
+            <Card onClick={() => play(id)} id={id} key={id} />)
+          }
+        </div>
+      }
     </div>
   );
 }
