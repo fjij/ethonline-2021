@@ -1,6 +1,7 @@
 import React from 'react';
+import Card from './Card';
 
-interface Card {
+interface CardProps {
   id: number;
   name: string;
   image: string;
@@ -9,37 +10,40 @@ interface Card {
   description: string;
 }
 
-const cards: Card[] = [];
+const cards: CardProps[] = [];
 
 export default function MyCollection() {
   return (
     <>
       <div className="heading">
         <h1>Card Collection</h1>
+        <Card id={1} />
+        <Card id={1} />
+        <Card id={1} />
       </div>
     </>
   );
 }
 
-const Collection = () => {
+function Collection() {
   return (
     <section className="collection">
       {cards.map((card) => {
-        return <CardLoader {...card}></CardLoader>;
+        return <CardDisplay {...card}></CardDisplay>;
       })}
     </section>
   );
 };
 
-const CardLoader = (props: Card) => {
-  const { id, name, image, attack, points, description } = props;
+function CardDisplay(props: CardProps) {
+  const { name, image, description } = props;
   return (
-    <article className="card">
+    <article className="collection-card">
       <section className="center">
         <img src={image}></img>
         <h3>{name}</h3>
       </section>
-      <p className="card-desc">{description}</p>
+      <p className="collection-card-desc">{description}</p>
     </article>
   );
 };

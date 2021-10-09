@@ -13,6 +13,11 @@ export async function getUri(id: number): Promise<string> {
   return uri.replace("{id}", `${id}`);
 }
 
+export async function getMetadata(ids: number[]): Promise<string[]> {
+  const uri: string = await contract.uri(0);
+  return ids.map(id => uri.replace("{id}", `${id}`));
+}
+
 export async function balanceOf(address: string, id: number): Promise<number> {
   return (await contract.balanceOf(address, id)).toNumber();
 }
