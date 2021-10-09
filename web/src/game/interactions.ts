@@ -1,57 +1,79 @@
-const gen = require('random-seed');
-
-interface Inflict {
+export interface Inflict {
   name: 'inflict';
   keywords: Keyword[];
 }
 
-interface Discard {
+export interface Discard {
   name: 'discard';
   value: number;
 }
 
-interface Empower {
+export interface Empower {
   name: 'empower';
   keywords: Keyword[];
 }
 
-interface Flip {
+export interface Flip {
   name: 'flip';
   keywords: Keyword[];
 }
 
-interface Swap {
+export interface FlipResult {
+  name: 'flip';
+  keywords: Keyword[];
+  heads: boolean;
+}
+
+export interface Swap {
   name: 'swap';
 }
 
-interface Plus {
+export interface Plus {
   name: 'plus';
   value: number;
 }
 
-interface Immune {
+export interface Immune {
   name: 'immune';
 }
 
-interface Squelch {
+export interface Squelch {
   name: 'squelch';
 }
 
-interface Draw {
+export interface Draw {
   name: 'draw';
   value: number
 }
 
-export type Keyword = Flip |
-  Inflict |
-  Empower |
-  Swap |
-  Plus |
-  Discard |
-  Immune |
-  Draw |
-  Squelch;
+export interface FailedKeyword {
+  name: 'fail';
+  keyword: Keyword;
+}
 
+export interface OwnedKeywordResult {
+  isOther: boolean;
+  result: Inflict
+    | Discard 
+    | Empower
+    | FlipResult
+    | Swap
+    | Plus
+    | Immune
+    | Squelch
+    | Draw
+    | FailedKeyword;
+}
+
+export type Keyword = Flip
+  | Inflict
+  | Empower
+  | Swap
+  | Plus
+  | Discard
+  | Immune
+  | Draw
+  | Squelch;
 
 const PRIORITY_LIST = [
   'immune',
@@ -75,14 +97,20 @@ interface OwnedKeyword {
   keyword: Keyword;
 }
 
-export function isWinner(
+interface InteractionResult {
+  keywords: OwnedKeywordResult[],
+  won: boolean,
+  otherWon: boolean,
+}
+
+export function computeInteraction(
   power: number,
   keywords: Keyword[],
   otherPower: number,
   otherKeywords: Keyword[],
   isFirst: boolean,
-  seed: string,
-): boolean {
+  randInt: (range: number) => number,
+): InteractionResult {
   const stats = {
     power,
     immune: false,
@@ -91,16 +119,18 @@ export function isWinner(
     power: otherPower,
     immune: false,
   }
-  const rand = gen.create(seed);
   const ownedKeywords = keywords.map(keyword => ({ isOther: false, keyword }));
   const otherOwnedKeywords = otherKeywords.map(keyword => ({ isOther: true, keyword }));
   let allKeywords: OwnedKeyword[] = isFirst
     ? [...ownedKeywords, ...otherOwnedKeywords]
     : [...otherOwnedKeywords, ...ownedKeywords];
 
+  const emittedKeywords: OwnedKeywordResult[] = [];
+
   while(allKeywords.length > 0) {
     allKeywords.sort((a, b) => PRIORITY_LIST.indexOf(a.keyword.name) - PRIORITY_LIST.indexOf(b.keyword.name));
     const { isOther, keyword } = allKeywords.shift() as OwnedKeyword;
+
     switch (keyword.name) {
       case 'immune': {
         if (isOther) {
@@ -108,29 +138,45 @@ export function isWinner(
         } else {
           stats.immune = true;
         }
+        emittedKeywords.push({ isOther, result: keyword });
         break;
       }
       case 'squelch': {
-        if (isOther && stats.immune) break;
-        if (!isOther && otherStats.immune) break;
+        if (isOther && stats.immune) {
+          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          break;
+        }
+        if (!isOther && otherStats.immune) {
+          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          break;
+        }
         allKeywords = allKeywords.filter(ownedKeyword => ownedKeyword.isOther === isOther
           || ownedKeyword.keyword.name === 'squelch');
+        emittedKeywords.push({ isOther, result: keyword });
         break;
       }
       case 'flip': {
-        const heads = rand(2) === 1;
+        const heads = randInt(2) === 1;
         if (heads) {
           allKeywords.push({ keyword: keyword.keywords[0], isOther });
         } else {
           allKeywords.push({ keyword: keyword.keywords[1], isOther });
         }
+        emittedKeywords.push({ isOther, result: { ...keyword, heads } });
         break;
       }
       case 'inflict': {
-        if (isOther && stats.immune) break;
-        if (!isOther && otherStats.immune) break;
+        if (isOther && stats.immune) {
+          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          break;
+        }
+        if (!isOther && otherStats.immune) {
+          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          break;
+        }
         keyword.keywords
           .forEach(kw => allKeywords.push({ keyword: kw, isOther: !isOther }));
+        emittedKeywords.push({ isOther, result: keyword });
         break;
       }
       case 'plus': {
@@ -139,31 +185,43 @@ export function isWinner(
         } else {
           stats.power += keyword.value;
         }
+        emittedKeywords.push({ isOther, result: keyword });
         break;
       }
       case 'discard': {
-        // TODO: card discard
+        emittedKeywords.push({ isOther, result: keyword });
         break;
       }
       case 'draw': {
-        // TODO: card draw
+        emittedKeywords.push({ isOther, result: keyword });
         break;
       }
       case 'empower': {
-        // TODO: empower
+        emittedKeywords.push({ isOther, result: keyword });
         break;
       }
       case 'swap': {
-        if (isOther && stats.immune) break;
-        if (!isOther && otherStats.immune) break;
+        if (isOther && stats.immune) {
+          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          break;
+        }
+        if (!isOther && otherStats.immune) {
+          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          break;
+        }
         const temp = stats.power;
         stats.power = otherStats.power;
         otherStats.power = temp;
+        emittedKeywords.push({ isOther, result: keyword });
         break;
       }
     }
   }
-  return stats.power > otherStats.power;
+  return {
+    keywords: emittedKeywords,
+    won: stats.power > otherStats.power,
+    otherWon: stats.power > otherStats.power,
+  };
 }
 
 export function keywordToText(kw: Keyword): string {

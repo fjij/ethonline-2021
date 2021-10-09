@@ -4,8 +4,6 @@ import * as crypto from './crypto';
 
 const stringify = require('json-stringify-deterministic');
 
-const SALT_BYTES = 12;
-
 export interface SaltedData {
   data: any;
   salt: string;
@@ -15,7 +13,6 @@ interface Turn {
   num: number;
   phase: 'setup' | 'reveal';
 }
-
 
 export interface SyncState {
   turn: Turn,
@@ -57,15 +54,11 @@ export function baseState(other: string): SyncState {
   }
 }
 
-function generateSalt() {
-  return crypto.b64encode(crypto.randomBytes(SALT_BYTES));
-}
-
 export function playMove(state: SyncState, move: any): SyncState {
   if (state.status.sent || state.turn.phase !== 'setup') {
     return state;
   }
-  const saltedData: SaltedData = { data: move, salt: generateSalt() };
+  const saltedData: SaltedData = { data: move, salt: crypto.generateSalt() };
   const data: MoveSetup = {
     key: 'setup',
     hash: crypto.hash(stringify(saltedData)),

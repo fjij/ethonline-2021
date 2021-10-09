@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Card from './Card';
-import { message, channel, game, crypto } from '../comms';
+import { channel, crypto } from '../comms';
 import { card, wallet } from '../eth';
 import { interactions } from '../game';
+import useSync from '../hooks/useSync';
+
+const gen = require('random-seed');
 
 const SEED_BYTES = 12;
 
@@ -13,66 +16,34 @@ interface Move {
   seed: string;
 }
 
-function isFirst(other: string) {
-  const addresses = [wallet.getAddress(), other];
-  addresses.sort();
-  return addresses[0] === wallet.getAddress();
-}
-
 export default function Game() {
 
   const { other }: any = useParams();
 
-  const [syncState, setSyncState] = useState(game.baseState(other));
+  const addresses = [wallet.getAddress(), other];
+  addresses.sort();
+  const isFirst = addresses[0] === wallet.getAddress();
+
   const [text, setText] = useState('');
   const [canMove, setCanMove] = useState(true);
   const [myCard, setMyCard] = useState<number | undefined>();
   const [otherCard, setOtherCard] = useState<number | undefined>();
 
-  useEffect(() => {
-    return message.listen((msg) => {
-      setSyncState(state => game.handleMessage(state, msg));
-    }, channel.CreateGameChannel(other));
-  }, []);
-
-  useEffect(() => {
-    if (syncState.todo.outgoing.length > 0) {
-      setSyncState(state => {
-        state.todo.outgoing.forEach(data => {
-          message.send(data, channel.CreateGameChannel(other));
-        });
-        return { ...state, todo: { ...state.todo, outgoing: [] } };
-      });
-    }
-  }, [syncState.todo.outgoing]);
-
-  useEffect(() => {
-    if (syncState.todo.turns.length > 0) {
-      setSyncState(state => {
-        state.todo.turns.forEach(turn => {
-          onMoves(turn.move, turn.otherMove);
-        });
-        return { ...state, todo: { ...state.todo, turns: [] } };
-      });
-    }
-  }, [syncState.todo.turns]);
-  
-  useEffect(() => {
-    console.log('syncState updated - salt: ', syncState);
-  }, [syncState]);
+  const playMove = useSync(onMoves, channel.CreateGameChannel(other), other);
 
   async function onMoves(move: Move, otherMove: Move) {
     setOtherCard(otherMove.id);
     const [cardData, otherCardData] = await Promise.all([
       card.getCardData(move.id), card.getCardData(otherMove.id),
     ]);
-    const seed = isFirst(other) ?
+    const seed = isFirst ?
       `${move.seed}${otherMove.seed}` : `${otherMove.seed}${move.seed}`;
-    const isWinner = interactions.isWinner(
+    const randInt = gen.create(seed);
+    const result = interactions.computeInteraction(
       cardData.power, cardData.keywords,
       otherCardData.power, otherCardData.keywords,
-      isFirst(other), seed);
-    if (isWinner) {
+      isFirst, randInt);
+    if (result.won) {
       setText('you\'re winner!');
     } else {
       setText('you\'re NOT winner!');
@@ -86,11 +57,7 @@ export default function Game() {
       id,
       seed: crypto.b64encode(crypto.randomBytes(SEED_BYTES))
     }
-    setSyncState(state => {
-      const newState = game.playMove(state, move)
-      console.log(newState.data.move?.salt);
-      return newState
-    });
+    playMove(move);
     setText(`you played card ${id}`);
     setCanMove(false);
   }
