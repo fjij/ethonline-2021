@@ -5,6 +5,8 @@ import { wallet } from '../eth';
 import * as channel from './channel';
 import * as crypto from './crypto';
 
+const stringify = require('json-stringify-deterministic');
+
 const NONCE_BYTES = 24;
 const MESSAGE_LIFETIME = 30*1000;
 const REPEAT_DELAY = 500;
@@ -51,7 +53,7 @@ export class Message {
   }
 
   toString() {
-    return JSON.stringify({
+    return stringify({
       data: this.data,
       sender: this.sender,
       metadata: this.metadata,
@@ -120,7 +122,7 @@ export function send(data: any, channel: channel.Channel, repeat: number = 0) {
   const msg = new Message(data, wallet.getAddress(), walletSignature);
   const signedMsg = crypto.sign(msg.toString());
   const contentTopic = channel.getContentTopic();
-  const text = JSON.stringify(signedMsg);
+  const text = stringify(signedMsg);
   async function sendRecursive(repeat: number) {
     if (repeat < 0) {
       return;

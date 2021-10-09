@@ -2,6 +2,8 @@ import * as message from './message';
 import * as channel from './channel';
 import * as crypto from './crypto';
 
+const stringify = require('json-stringify-deterministic');
+
 const SALT_BYTES = 12;
 
 export interface SaltedData {
@@ -60,7 +62,7 @@ export function playMove(state: SyncState, move: any): SyncState {
   const saltedData: SaltedData = { data: move, salt };
   const data: MoveSetup = {
     key: 'setup',
-    hash: crypto.hash(JSON.stringify(saltedData)),
+    hash: crypto.hash(stringify(saltedData)),
     turn: state.turn,
   }
   send(state, data);
@@ -111,7 +113,7 @@ function handleTurnStatusUpdate(state: SyncState): SyncState {
 }
 
 function verifySaltedData(hash: string, saltedData: SaltedData) {
-  if (crypto.hash(JSON.stringify(saltedData)) !== hash) {
+  if (crypto.hash(stringify(saltedData)) !== hash) {
     throw new Error('salted data could not be verified');
   }
 }
