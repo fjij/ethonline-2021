@@ -1,0 +1,19 @@
+{
+    "name": "A Nime - Ocean",
+    "description": "As the leader of the A Nime crew, Ocean has lots of important responsibilities... like visiting the world and stuff.",
+    "image": "25-a nime ocean.png",
+    "rarity": "ultra",
+    "power": 5,
+    "keywords": [
+        {
+            "name": "empower",
+            "keywords": [
+                {
+                    "name": "discard",
+                    "value": 1
+                }
+            ]
+        }
+    ]
+  }
+  

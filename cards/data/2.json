@@ -1,5 +1,13 @@
 {
-  "name": "roe creature",
-  "description": "A test cardddd.",
-  "image": "2-roe-creature.png"
+  "name": "Roe Creature",
+  "description": "Having been rejected by its family, the Roe Creature has grown a voracious appetite for its peers.",
+  "image": "2-roe-creature.png",
+  "rarity": "common",
+  "power": "3",
+  "keywords":[
+    {
+      "name": "plus",
+      "value": 1
+    }
+  ]
 }

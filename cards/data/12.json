@@ -1,0 +1,13 @@
+{
+    "name": "Jack Oeuf",
+    "description": "This kind-hearted high schooler spends his days fighting off bullys and protecting nerds, and spends his nights... well, studying.",
+    "image": "12-jack oeuf.png",
+    "rarity": "common",
+    "power": 3,
+    "keywords": [
+        {
+            "name": "immune"
+        }
+    ]
+  }
+  

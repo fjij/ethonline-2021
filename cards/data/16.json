@@ -1,0 +1,19 @@
+{
+    "name": "Bonapetit",
+    "description": "Please, enjoy your meal. Don't mind Bonapetit over here, he's just watching.",
+    "image": "16-bonapetit reverse.png",
+    "rarity": "ultra",
+    "power": 5,
+    "keywords": [
+        {
+            "name": "inflict",
+            "keywords": [
+                {
+                    "name": "plus",
+                    "value": 1
+                }
+            ]
+        }
+    ]
+  }
+  

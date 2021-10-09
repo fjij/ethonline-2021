@@ -1,0 +1,21 @@
+{
+    "name": "Big Schnose Quapper",
+    "description": "I once saw my cat run into the bin where Big Schnose lives; I wouldn't dare get any closer to look for her. She never came home.",
+    "image": "6-mctrashbin.png",
+    "rarity": "ultra",
+    "power": 3,
+    "keywords": [
+        {
+            "name": "inflict",
+            "keywords": [
+                {
+                    "name": "plus",
+                    "value": 2
+                }
+            ]
+        },
+        {
+            "name": "swap"
+        }
+    ]
+  }

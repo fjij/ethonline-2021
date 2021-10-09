@@ -1,0 +1,24 @@
+{
+    "name": "A Nime - Teriyaki",
+    "description": "Very cool.",
+    "image": "28-a nime teriyaki.png",
+    "rarity": "rare",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "empower",
+            "keywords": [
+                {
+                    "name": "inflict",
+                    "keywords": [
+                        {
+                            "name": "plus",
+                            "value": -1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+  }
+  

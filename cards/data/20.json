@@ -1,0 +1,17 @@
+{
+    "name": "Ruthless Forest Queen",
+    "description": "The Queen fears nothing, the forest is her domain. But WHAT is thing on her back?!",
+    "image": "20-ruthless forest queen.png",
+    "rarity": "ultra",
+    "power": 4,
+    "keywords": [
+        {
+            "name": "squelch"
+        },
+        {
+            "name": "discard",
+            "value": 1
+        }
+    ]
+  }
+  

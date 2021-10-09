@@ -1,5 +1,8 @@
 {
-  "name": "Test Card",
-  "description": "A test card.",
-  "image": "0.png"
+  "name": "Cool",
+  "description": "Very cool.",
+  "image": "0.png",
+  "rarity": "ultra",
+  "power": 0,
+  "keywords": []
 }

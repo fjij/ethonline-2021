@@ -1,0 +1,14 @@
+{
+    "name": "Hairy Legs",
+    "description": "A bug's worst nightmare.",
+    "image": "13-runner legs.png",
+    "rarity": "common",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "plus",
+            "value": 1
+        }
+    ]
+  }
+  

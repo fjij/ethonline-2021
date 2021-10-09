@@ -1,0 +1,14 @@
+{
+    "name": "Mr. Ravioli",
+    "description": "Born a sewer rat, this respectable citizen teaches at a local high school. But whenever a full moon appears, he cannot help but return to his vermin ways.",
+    "image": "11-mr ravioli.png",
+    "rarity": "common",
+    "power": 6,
+    "keywords": [
+        {
+            "name": "discard",
+            "value": 2
+        }
+    ]
+  }
+  
