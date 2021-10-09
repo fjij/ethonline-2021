@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { game } from '../comms';
+import { message, channel, game } from '../comms';
 
 export default function Game() {
 
   const { other }: any = useParams();
   const [_, setSyncState] = useState(game.baseState(other, onMoves));
+
+  useEffect(() => {
+    return message.listen((msg) => {
+      setSyncState(state => game.handleMessage(state, msg));
+    }, channel.CreateGameChannel(other));
+  }, []);
 
   function onMoves(move: any, otherMove: any) {
     console.log(`fight! ${move} vs ${otherMove}`);
