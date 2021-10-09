@@ -1,0 +1,28 @@
+{
+    "name": "Shabby, on the Run",
+    "description": "Shabby spent all of high school running. Now the only he runs to is the toilet.",
+    "image": "8-irritable bowel man.png",
+    "rarity": "rare",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "flip",
+            "keywords": [
+                {
+                    "name": "inflict",
+                    "keywords": [
+                        {
+                            "name": "discard",
+                            "value": 2
+                        }
+                    ]
+                },
+                {
+                    "name": "discard",
+                    "value": 2
+                }
+            ]
+        }
+    ]
+  }
+  

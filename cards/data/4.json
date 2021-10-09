@@ -1,0 +1,18 @@
+{
+    "name": "Green Greendma",
+    "description": "My, what big eyes you have... and what a big mouth you have... and what green skin you have!",
+    "image": "4-green gramma.png",
+    "rarity": "common",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "inflict",
+            "keywords": [
+                {
+                    "name": "plus",
+                    "value": -2
+                }
+            ]
+        }
+    ]
+  }

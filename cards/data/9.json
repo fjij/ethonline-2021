@@ -1,0 +1,28 @@
+{
+    "name": "Shabby, Working Overtime",
+    "description": "Friday nights are for fun. For Shabby, Friday nights are for his boss. ",
+    "image": "9-overtime dude.png",
+    "rarity": "ultra",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "flip",
+            "keywords": [
+                {
+                    "name": "inflict",
+                    "keywords": [
+                        {
+                            "name": "plus",
+                            "value": -3
+                        }
+                    ]
+                },
+                {
+                    "name": "plus",
+                    "value": -2
+                }
+            ]
+        }
+    ]
+  }
+  

@@ -1,5 +1,18 @@
 {
-  "name": "king roe",
-  "description": "A test card.",
-  "image": "1-king-roe.png"
+  "name": "King Roe",
+  "description": "Only the finest roe of the king benus fish, harvested once a century, can aspire to become a King Roe",
+  "image": "1-king-roe.png",
+  "rarity": "common",
+  "power": 3,
+  "keywords":[
+    {
+      "name": "inflict",
+      "keywords": [
+        {
+          "name": "discard",
+          "value": 1
+        }
+      ]
+    }
+  ]
 }
