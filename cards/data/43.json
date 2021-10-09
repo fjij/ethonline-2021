@@ -1,0 +1,14 @@
+{
+    "name": "Red Roach",
+    "description": "Red Roach likes to mind its own business, unlike Hairy Legs and High Heels; those guys are bullies!",
+    "image": "43-red roaches alt.png",
+    "rarity": "ultra",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "draw",
+            "value": 1
+        }
+    ]
+  }
+  

@@ -1,0 +1,33 @@
+{
+    "name": "El Raccoon",
+    "description": "El Raccoons only every travel in packs. Sharing is NOT caring is their code of law. They are at a constant territorial war againt Big Schnose Quapper.",
+    "image": "31-el raccoon.png",
+    "rarity": "ultra",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "inflict",
+            "keywords": [
+                {
+                    "name": "discard",
+                    "value": 1
+                }
+            ]
+        },
+        {
+            "name": "empower",
+            "keywords": [
+                {
+                    "name": "inflict",
+                    "keywords": [
+                        {
+                            "name": "discard",
+                            "value": 1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+  }
+  

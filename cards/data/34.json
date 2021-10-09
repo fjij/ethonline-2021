@@ -1,0 +1,18 @@
+{
+    "name": "Roe Origin",
+    "description": "Where does roe come from? Well Roe Origin, of course! But where does Roe Origin come from?",
+    "image": "34-roe origin.png",
+    "rarity": "common",
+    "power": 3,
+    "keywords": [
+        {
+            "name": "draw",
+            "value": 1
+        },
+        {
+            "name": "discard",
+            "value": 1
+        }
+    ]
+  }
+  

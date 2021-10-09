@@ -1,8 +1,8 @@
 {
-    "name": "Shabby, Working Overtime",
-    "description": "Friday nights are for fun. For Shabby, Friday nights are for his boss.",
-    "image": "9-overtime dude.png",
-    "rarity": "ultra",
+    "name": "Deepest Crab",
+    "description": "This crab likes money... or was it dance music?",
+    "image": "40-dark crab.png",
+    "rarity": "rare",
     "power": 2,
     "keywords": [
         {
@@ -13,13 +13,12 @@
                     "keywords": [
                         {
                             "name": "plus",
-                            "value": -3
+                            "value": -1
                         }
                     ]
                 },
                 {
-                    "name": "plus",
-                    "value": -2
+                    "name": "squelch"
                 }
             ]
         }

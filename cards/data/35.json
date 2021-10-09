@@ -1,0 +1,13 @@
+{
+    "name": "Roe Keydius",
+    "description": "Low keydius, Roe Keydius is kinda chill. High keydius, though, it doesn't respect your privacy.",
+    "image": "35-roe keydius.png",
+    "rarity": "common",
+    "power": 3,
+    "keywords": [
+        {
+            "name": "swap"
+        }
+    ]
+  }
+  

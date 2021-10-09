@@ -1,0 +1,14 @@
+{
+    "name": "Larry",
+    "description": "Larry was a shark. He was a big shark. And he had big teeth. And he was a shark.",
+    "image": "32-larry.png",
+    "rarity": "ultra",
+    "power": 7,
+    "keywords": [
+        {
+            "name": "discard",
+            "value": 4
+        }
+    ]
+  }
+  

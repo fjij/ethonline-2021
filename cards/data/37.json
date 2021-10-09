@@ -1,0 +1,33 @@
+{
+    "name": "Time to Sleep",
+    "description": "It's time to go to bed. You don't want these guys to see you awake. They're a lot meaner than they look, probably.",
+    "image": "37-the boys.png",
+    "rarity": "rare",
+    "power": 0,
+    "keywords": [
+        {
+            "name": "inflict",
+            "keywords": [
+                {
+                    "name": "discard",
+                    "value": 1
+                }
+            ]
+        },
+        {
+            "name": "inflict",
+            "keywords": [
+                {
+                    "name": "empower",
+                    "keywords": [
+                        {
+                            "name": "plus",
+                            "value": -1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+  }
+  

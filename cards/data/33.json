@@ -1,0 +1,23 @@
+{
+    "name": "Lawn Roewer",
+    "description": "Gotta trim the grass? Fret no more, Lawn Roewer is here! It Roes your lawn like nothing you've seen before! ...Leaves a slight fishy smell after.",
+    "image": "33-lawn roewer.png",
+    "rarity": "common",
+    "power": 3,
+    "keywords": [
+        {
+            "name": "flip",
+            "keywords": [
+                {
+                    "name": "plus",
+                    "value": 1
+                },
+                {
+                    "name": "plus",
+                    "value": -1
+                }
+            ]
+        }
+    ]
+  }
+  
