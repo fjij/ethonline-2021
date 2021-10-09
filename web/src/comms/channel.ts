@@ -35,9 +35,3 @@ export function CreateGameChannel(other: string) {
   addresses.sort();
   return new Channel({ key: 'game', id: addresses.join('-') });
 }
-
-export function isFirst(other: string) {
-  const addresses = [wallet.getAddress(), other];
-  addresses.sort();
-  return addresses[0] === wallet.getAddress();
-}

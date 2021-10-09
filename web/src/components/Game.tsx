@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Card from './Card';
-import { message, channel, game } from '../comms';
+import { message, channel, game, crypto } from '../comms';
 import { card, wallet } from '../eth';
 import { interactions } from '../game';
+
+const SEED_BYTES = 12;
 
 interface Move {
   id: number;
@@ -54,7 +56,11 @@ export default function Game() {
 
   function play(id: number) {
     setMyCard(id);
-    setSyncState(state => game.playMove(state, id));
+    const move: Move = {
+      id,
+      seed: crypto.b64encode(crypto.randomBytes(SEED_BYTES))
+    }
+    setSyncState(state => game.playMove(state, move));
     setText(`you played card ${id}`);
     setCanMove(false);
   }
