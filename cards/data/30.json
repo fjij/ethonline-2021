@@ -1,0 +1,32 @@
+{
+    "name": "El Camel",
+    "description": "El Camel pull up in groups; you'll never see one alone. It would sooner turn El dead than El alone.",
+    "image": "30-el camel.png",
+    "rarity": "ultra",
+    "power": 1,
+    "keywords": [
+        {
+            "name": "draw",
+            "value": 1
+        },
+        {
+            "name": "empower",
+            "keywords": [
+                {
+                    "name": "plus",
+                    "value": 1
+                },
+                {
+                    "name": "empower",
+                    "keywords": [
+                        {
+                            "name": "plus",
+                            "value": 1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+  }
+  

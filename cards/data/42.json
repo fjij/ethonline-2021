@@ -1,0 +1,17 @@
+{
+    "name": "Goon Gang",
+    "description": "This is what happens when Red Roach gets tired of being trampled and turns to Mr. Ravioli's goons for protection. This gang won't go down so easily. Unless you get an exterminator...",
+    "image": "42-goon gang.png",
+    "rarity": "rare",
+    "power": 2,
+    "keywords": [
+        {
+            "name": "swap"
+        },
+        {
+            "name": "discard",
+            "value": 1
+        }
+    ]
+  }
+  

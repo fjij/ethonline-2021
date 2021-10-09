@@ -1,9 +1,9 @@
 {
-    "name": "Shabby, on the Run",
-    "description": "Shabby spent all of high school running. Now the only thing he runs to is the toilet.",
-    "image": "8-irritable bowel man.png",
+    "name": "Deepest Shrimp",
+    "description": "In the deepests depths of the ocean, you won't be able to see anything; but you will feel the 10,000 degree punch of this shrimp.",
+    "image": "38-dark shrimp.png",
     "rarity": "rare",
-    "power": 2,
+    "power": 1,
     "keywords": [
         {
             "name": "flip",
@@ -13,13 +13,12 @@
                     "keywords": [
                         {
                             "name": "discard",
-                            "value": 2
+                            "value": 1
                         }
                     ]
                 },
                 {
-                    "name": "discard",
-                    "value": 2
+                    "name": "squelch"
                 }
             ]
         }

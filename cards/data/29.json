@@ -1,0 +1,19 @@
+{
+    "name": "Brush Beast",
+    "description": "Once a millenia, a beast erupts from the base of El Mountain, spewing flame and rock. For no reason, really; it just goes back to sleep right after, weird.",
+    "image": "29-brush beast.png",
+    "rarity": "rare",
+    "power": 5,
+    "keywords": [
+        {
+            "name": "empower",
+            "keywords": [
+                {
+                    "name": "plus",
+                    "value": -3
+                }
+            ]
+        }
+    ]
+  }
+  

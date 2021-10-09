@@ -3,7 +3,7 @@
     "description": "What's in the vase? Nobody knows. But legend tells that its contents can make barren lands fertile.",
     "image": "3-chalice.png",
     "rarity": "rare",
-    "power": 1,
+    "power": 0,
     "keywords": [
         {
             "name": "draw",
