@@ -105,12 +105,14 @@ export function draw(
   if (isHero) {
     return draw({
       ...state,
+      deck: newDeck,
       heroes: [ ...state.heroes, state.deck[index]]
     }, randInt, isHero, count - 1);
   } else {
     console.log('draw');
     return draw({
       ...state,
+      deck: newDeck,
       hand: [ ...state.hand, state.deck[index]]
     }, randInt, isHero, count - 1);
   }

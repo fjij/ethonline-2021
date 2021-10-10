@@ -49,8 +49,79 @@ export default function Game() {
 
   const playMove = useSync(onMoves, channel.CreateGameChannel(other), other);
 
-  async function handleKeywordResult(result: interactions.OwnedKeywordResult) {
+  async function handleKeywordResult(
+    result: interactions.OwnedKeywordResult,
+    randInt: (range: number) => number
+  ) {
     await sleep(800);
+    const keyword = result.result;
+    switch (keyword.name) {
+      case 'draw':
+      {
+        if (result.isOther) {
+          setBoardState(state => ({
+            ...state,
+            otherPlayerState: board.draw(
+              state.otherPlayerState!, randInt, false, keyword.value)
+          }));
+        } else {
+          setBoardState(state => ({
+            ...state,
+            playerState: board.draw(
+              state.playerState!, randInt, false, keyword.value)
+          }));
+        }
+        break;
+      }
+      case 'discard':
+      {
+        if (result.isOther) {
+          setBoardState(state => ({
+            ...state,
+            otherPlayerState: board.discard(
+              state.otherPlayerState!, randInt, keyword.value)
+          }));
+        } else {
+          setBoardState(state => ({
+            ...state,
+            playerState: board.discard(
+              state.playerState!, randInt, keyword.value)
+          }));
+        }
+        break;
+      }
+      case 'empower':
+      {
+        if (result.isOther) {
+          setBoardState(state => ({
+            ...state,
+            otherPlayerState: {
+              ...state.otherPlayerState!,
+              empower: keyword
+            }
+          }));
+        } else {
+          setBoardState(state => ({
+            ...state,
+            playerState: {
+              ...state.playerState!,
+              empower: keyword
+            }
+          }));
+        }
+        break;
+      }
+      case 'flip':
+      case 'fail':
+      case 'plus':
+      case 'immune':
+      case 'swap':
+      case 'inflict':
+      case 'squelch':
+      {
+        console.log(JSON.stringify(result.result));
+      }
+    }
     console.log(result);
   }
 
@@ -76,8 +147,32 @@ export default function Game() {
         isFirst, randInt);
 
       for (let i = 0; i < result.keywords.length; i ++) {
-        await handleKeywordResult(result.keywords[i]);
+        await handleKeywordResult(result.keywords[i], randInt);
       }
+
+      // Draw cards if less than 4
+      setBoardState(state => {
+        let newState, newOtherState;
+        if (isFirst) {
+          if (state.playerState!.hand.length < 4) {
+            newState = board.draw(state.playerState!, randInt);
+          }
+          if (state.otherPlayerState!.hand.length < 4) {
+            newOtherState = board.draw(state.otherPlayerState!, randInt);
+          }
+        } else {
+          if (state.otherPlayerState!.hand.length < 4) {
+            newOtherState = board.draw(state.otherPlayerState!, randInt);
+          }
+          if (state.playerState!.hand.length < 4) {
+            newState = board.draw(state.playerState!, randInt);
+          }
+        }
+        return {
+          playerState: newState,
+          otherPlayerState: newOtherState,
+        }
+      });
 
       if (result.won) {
         setText('you\'re winner!');
@@ -168,35 +263,33 @@ export default function Game() {
           }
         </div>
         <br />
-        { canMove &&
-          <div>
-            <p>Deck: {boardState.playerState.deck.length}</p>
-            <h1>Choose a card</h1>
-            <button onClick={play} disabled={!canMove || !selectedCard}>Confirm</button>
-            <h2>Hand</h2>
-            { 
-              boardState.playerState.hand.map(card => card as board.FaceUpCardState)
-                .map(card => <Card
-                  onClick={() => setSelectedCard(card)}
-                  id={card.data.id} 
-                  key={card.hash}
-                  disabled={!canMove}
-                  selected={selectedCard?.hash === card.hash}
-                />)
-            }
-            <h2>Heroes</h2>
-            { 
-              boardState.playerState.heroes.map(card => card as board.FaceUpCardState)
-                .map(card => <Card
-                  onClick={() => setSelectedCard(card)}
-                  id={card.data.id} 
-                  key={card.hash}
-                  disabled={!canMove}
-                  selected={selectedCard?.hash === card.hash}
-                />)
-            }
-          </div>
-        }
+        <div>
+          <p>Deck: {boardState.playerState.deck.length}</p>
+          <h1>Choose a card</h1>
+          <button onClick={play} disabled={!canMove || !selectedCard}>Confirm</button>
+          <h2>Hand</h2>
+          {
+            boardState.playerState.hand.map(card => card as board.FaceUpCardState)
+              .map(card => <Card
+                onClick={() => setSelectedCard(card)}
+                id={card.data.id}
+                key={card.hash}
+                disabled={!canMove}
+                selected={selectedCard?.hash === card.hash}
+              />)
+          }
+          <h2>Heroes</h2>
+          {
+            boardState.playerState.heroes.map(card => card as board.FaceUpCardState)
+              .map(card => <Card
+                onClick={() => setSelectedCard(card)}
+                id={card.data.id}
+                key={card.hash}
+                disabled={!canMove}
+                selected={selectedCard?.hash === card.hash}
+              />)
+          }
+        </div>
       </div>
     }
     </div>
