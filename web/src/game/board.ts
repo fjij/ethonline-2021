@@ -4,7 +4,7 @@ import { interactions } from '../game';
 
 const stringify = require('json-stringify-deterministic');
 
-interface FaceUpCardState {
+export interface FaceUpCardState {
   data: {
     id: number;
     salt: string;
@@ -12,7 +12,7 @@ interface FaceUpCardState {
   hash: string;
 }
 
-interface FaceDownCardState {
+export interface FaceDownCardState {
   hash: string;
 }
 
@@ -28,8 +28,8 @@ export interface PlayerState {
 }
 
 export interface BoardState {
-  playerState: PlayerState;
-  otherPlayerState: PlayerState;
+  playerState?: PlayerState;
+  otherPlayerState?: PlayerState;
 }
 
 export function hasLost(state: PlayerState): boolean {
@@ -69,6 +69,9 @@ export function playCards(
   card: FaceUpCardState,
   otherCard: FaceUpCardState
 ): BoardState {
+  if (!state.playerState || !state.otherPlayerState) {
+    throw new Error('player states not ready');
+  }
   return {
     ...state,
     playerState: playCard(state.playerState, card),
@@ -83,8 +86,12 @@ export function consumeEmpower(state: PlayerState): PlayerState {
 export function draw(
   state: PlayerState,
   randInt: (range: number) => number,
-  isHero: boolean = false
+  isHero: boolean = false,
+  count: number = 1,
 ): PlayerState {
+  if (count <= 0) {
+    return state;
+  }
   if (state.deck.length === 0) {
     return { ...state, overdrawn: true };
   }
@@ -96,20 +103,24 @@ export function draw(
   } else {
     newState.hand.push(state.deck[index]);
   }
-  return newState;
+  return draw(newState, randInt, isHero, count - 1);
 }
 
 export function discard(
   state: PlayerState,
   randInt: (range: number) => number,
+  count: number = 1,
 ): PlayerState {
+  if (count <= 0) {
+    return state;
+  }
   const index = randInt(state.hand.length);
   const newState = { ...state };
   newState.hand.splice(index, 1);
-  return newState;
+  return discard(newState, randInt, count - 1);
 }
 
-export function createDeck(ids: number[]): CardState[] {
+export function createDeck(ids: number[]): FaceUpCardState[] {
   return arrayShuffle(ids).map(id => {
     const data = { id, salt: crypto.generateSalt() };
     const hash = crypto.hash(stringify(data));

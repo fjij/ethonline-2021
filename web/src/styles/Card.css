@@ -15,6 +15,15 @@
 }
 
 .card-container:hover .card {
+  box-shadow: 0px 0px 10px 5px rgba(66, 173, 255, 0.5);
+}
+
+.card-container:hover .card.disabled {
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
+}
+
+.card.selected {
+  box-shadow: 0px 0px 10px 5px rgba(255, 208, 38, 0.8);
 }
 
 .card-text {
