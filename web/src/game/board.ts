@@ -55,13 +55,17 @@ function playCard(state: PlayerState, card: FaceUpCardState): PlayerState {
   if (handIndex === -1 && heroIndex === -1) {
     throw new Error('played invalid card state');
   }
-  const newState = { ...state };
   if (handIndex >= 0) {
-    newState.hand.splice(handIndex, 1);
+    const newHand = [ ...state.hand ];
+    newHand.splice(handIndex, 1);
+    return { ...state, hand: newHand };
   } else if (heroIndex >= 0) {
-    newState.heroes.splice(handIndex, 1);
+    const newHeroes = [ ...state.heroes ];
+    newHeroes.splice(heroIndex, 1);
+    return { ...state, heroes: newHeroes };
+  } else {
+    throw new Error('should not be here');
   }
-  return state;
 }
 
 export function playCards(
@@ -96,14 +100,20 @@ export function draw(
     return { ...state, overdrawn: true };
   }
   const index = randInt(state.deck.length);
-  const newState = { ...state };
-  newState.deck.splice(index, 1);
+  const newDeck = [ ...state.deck ];
+  newDeck.splice(index, 1);
   if (isHero) {
-    newState.heroes.push(state.deck[index]);
+    return draw({
+      ...state,
+      heroes: [ ...state.heroes, state.deck[index]]
+    }, randInt, isHero, count - 1);
   } else {
-    newState.hand.push(state.deck[index]);
+    console.log('draw');
+    return draw({
+      ...state,
+      hand: [ ...state.hand, state.deck[index]]
+    }, randInt, isHero, count - 1);
   }
-  return draw(newState, randInt, isHero, count - 1);
 }
 
 export function discard(
@@ -115,9 +125,12 @@ export function discard(
     return state;
   }
   const index = randInt(state.hand.length);
-  const newState = { ...state };
-  newState.hand.splice(index, 1);
-  return discard(newState, randInt, count - 1);
+  const newHand = [ ...state.hand ];
+  newHand.splice(index, 1);
+  return discard({
+    ...state,
+    hand: newHand,
+  }, randInt, count - 1);
 }
 
 export function createDeck(ids: number[]): FaceUpCardState[] {
