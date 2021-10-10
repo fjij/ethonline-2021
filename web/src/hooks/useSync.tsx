@@ -17,25 +17,20 @@ export default function useSync(
 
   useEffect(() => {
     if (syncState.todo.outgoing.length > 0) {
-      setSyncState(state => {
-        state.todo.outgoing.forEach(data => {
-          message.send(data, channel);
-        });
-        return { ...state, todo: { ...state.todo, outgoing: [] } };
+      syncState.todo.outgoing.forEach(data => {
+        message.send(data, channel);
       });
+      setSyncState(state => ({ ...state, todo: { ...state.todo, outgoing: [] }}));
     }
   }, [syncState.todo.outgoing]);
 
 
   useEffect(() => {
     if (syncState.todo.turns.length > 0) {
-      setSyncState(state => {
-        state.todo.turns.forEach(turn => {
-          console.log('onMoves');
-          onMoves(turn.move, turn.otherMove);
-        });
-        return { ...state, todo: { ...state.todo, turns: [] } };
+      syncState.todo.turns.forEach(turn => {
+        onMoves(turn.move, turn.otherMove);
       });
+      setSyncState(state => ({ ...state, todo: { ...state.todo, turns: [] } }));
     }
   }, [syncState.todo.turns]);
 
