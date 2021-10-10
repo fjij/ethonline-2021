@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CollectionDisplayCard from "./CollectionDisplayCard";
-import { ipfs, card } from "../eth";
+import { ipfs, card, contract } from "../eth";
 import "../styles/CollectionDisplayCard.css";
 
 interface CardProps {
@@ -15,11 +15,17 @@ interface CardProps {
 const cards: CardProps[] = [];
 
 export default function MyCollection() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    contract.getCount().then(count => setCount(count));
+  }, []);
+
   return (
     <>
       <div className="heading">
         <section className="collection">
-          {Array.from(Array(43).keys()).map((id) => (
+          {Array.from(Array(count).keys()).map((id) => (
             <div className="collection-slot">
               <CollectionDisplayCard id={id} key={id} />
               <br />

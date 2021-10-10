@@ -22,6 +22,10 @@ export async function balanceOf(address: string, id: number): Promise<number> {
   return (await contract.balanceOf(address, id)).toNumber();
 }
 
+export async function getCount(): Promise<number> {
+  return (await contract.count()).toNumber();
+}
+
 export async function balanceOfBatch(
   address: string,
   ids: number[]
