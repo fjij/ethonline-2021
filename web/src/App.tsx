@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 //pages
 import Home from "./components/Home";
-import GameInstructions from "./components/GameInstructions";
+import Rules from "./components/Rules";
 import Store from "./components/Store";
 import Play from "./components/Play";
 import Game from "./components/Game";
@@ -28,8 +28,8 @@ function App() {
             <Route exact path="/">
               <Home />
             </Route>
-            <Route path="/gameInstructions">
-              <GameInstructions />
+            <Route path="/rules">
+              <Rules />
             </Route>
             <Route path="/store">
               <Store />
