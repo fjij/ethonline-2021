@@ -160,14 +160,12 @@ export function resolveSingle(
       return discardFor(newState, firstEffect.isOther, randInt, keyword.value);
     } else if (keyword.name === 'empower') {
       return empowerFor(newState, firstEffect.isOther, keyword);
-    } 
-    if (newKeywords.length === 0) {
-      return { ...newState, nextPhase: 'bonus' };
     } else {
       return newState;
     }
-  } 
-  throw new Error('shouldn\'t be here');
+  }  else {
+    return { ...newState, nextPhase: 'bonus' };
+  }
 }
 
 export function setupPhase(
