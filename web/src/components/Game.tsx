@@ -71,6 +71,7 @@ export default function Game() {
     isHero: boolean, 
     count: number
   ) {
+    console.log('dodraw');
     if (isOther) {
       setBoardState(state => ({
         ...state,
@@ -161,20 +162,24 @@ export default function Game() {
 
     if (move.key === 'card-move' && otherMove.key === 'card-move') {
 
+      console.log('MOVE START');
+
       const isHero = boardState.playerState!.heroes
         .map(c => c.hash).indexOf(move.card.hash) !== -1;
       const otherIsHero = boardState.otherPlayerState!.heroes
         .map(c => c.hash).indexOf(otherMove.card.hash) !== -1;
+      console.log('SPACE');
 
       setBoardState(state => board.playCards(state, move.card, otherMove.card));
       setSelectedCard(undefined);
+      console.log('FDSAIFJ');
       setMyCard(move.card);
       setOtherCard(otherMove.card);
-      const [cardData, otherCardData] = await Promise.all([
-        card.getCardData(move.card.data.id), card.getCardData(otherMove.card.data.id),
-      ]);
+      const cardData = await card.getCardData(move.card.data.id);
+      const otherCardData = await card.getCardData(otherMove.card.data.id);
       const empower = boardState.playerState!.empower;
       const otherEmpower = boardState.playerState!.empower;
+      console.log('GRAPS');
       if (empower) {
         await sleep(800);
         setBoardState(state => ({
@@ -189,6 +194,7 @@ export default function Game() {
           otherPlayerState: board.consumeEmpower(state.otherPlayerState!)
         }));
       }
+      console.log('BUNGA');
 
       const keywords = empower ? [ ...cardData.keywords, ...empower.keywords] : cardData.keywords;
       const otherKeywords = otherEmpower ? [ ...otherCardData.keywords, ...otherEmpower.keywords] : otherCardData.keywords;
@@ -201,6 +207,7 @@ export default function Game() {
       for (let i = 0; i < result.keywords.length; i ++) {
         await handleKeywordResult(result.keywords[i], randInt);
       }
+      console.log('UNGA');
 
       await sleep(800);
 
@@ -212,6 +219,7 @@ export default function Game() {
           }));
         } else {
           // Draw hero card
+          console.log('BEFORE DO DRAW');
           doDraw(false, randInt, true, 1);
         }
       } else {
