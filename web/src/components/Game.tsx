@@ -43,28 +43,24 @@ function useDelayedHand(source: board.CardState[] | undefined, destroyDelay: num
       const newHand = [ ...hand];
       const myHashes = hand.map(item => item.card.hash);
       const hashes = source.map(item => item.hash);
-      let modified = false;
       myHashes.forEach((myHash, idx) => {
         if (hashes.indexOf(myHash) === -1) {
-          modified = true;
           newHand[idx].destroyed = true;
           setTimeout(() => setHand(hand => hand.filter(item => item.card.hash !== myHash)), destroyDelay);
         }
       });
       hashes.forEach((hash, idx) => {
         if (myHashes.indexOf(hash) === -1) {
-          modified = true;
           newHand.push({ 
             card: source[idx] as board.FaceUpCardState, 
             destroyed: false,
           });
         }
       });
-      if (modified) {
-        setHand(newHand);
-      }
+      setHand(newHand);
     }
-  }, [source, destroyDelay, hand]);
+  // eslint-disable-next-line
+  }, [source]);
 
   return hand;
 }

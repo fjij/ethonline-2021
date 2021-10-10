@@ -95,13 +95,7 @@ export default function useGameState(other: string, onUpdate: () => Promise<void
         setBoardState(state => board.drawPhase(state, randInt.current!, isFirst));
       }
     })();
-  }, [boardState.nextPhase, 
-      boardState.playerState, 
-      boardState.otherPlayerState, 
-      boardState.combatResult?.keywords, 
-      isFirst,
-      onUpdate,
-      data, otherData]);
+  }, [boardState.nextPhase, boardState.combatResult?.keywords, data, otherData]);
 
   async function onCardMoves(move: CardMove, otherMove: CardMove) {
     setSeed(getSeed(move, otherMove));
