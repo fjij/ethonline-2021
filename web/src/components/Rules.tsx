@@ -1,5 +1,7 @@
 import React from "react";
 import "../styles/Rules.css";
+import explanation from "../assets/visual-explanation.png";
+
 export default function Rules() {
   return (
     <>
@@ -12,11 +14,14 @@ export default function Rules() {
           Players draw a card at the beginning of each turn if they have less
           than 4 cards
         </li>
+        <li>The card with the higher power wins the round </li>
         <li>Everytime your card wins, you draw a hero</li>
         <li>When you win with three hero cards, you win the game</li>
         <li>If a player is out of cards, they lose</li>
       </div>
       <TableEffects />
+
+      <img className="explanation-img" src={explanation}></img>
     </>
   );
 }

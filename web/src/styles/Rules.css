@@ -21,10 +21,14 @@
   width: 610px;
   margin: auto;
   margin-top: 40px;
+  margin-bottom: 20px;
 }
 
 .effect-explanation td,
 .effect-explanation th {
   border: 1px solid #888;
   padding: 8px;
+}
+
+.explanation-img {
 }
