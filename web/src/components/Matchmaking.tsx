@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory, Link, Redirect } from 'react-router-dom';
 import useInterval from '../hooks/useInterval';
 import { message, channel, matchmaking } from '../comms';
 
@@ -56,7 +56,10 @@ export default function Matchmaking() {
       { lfg ?
         <>
           <p>{ state.key }</p>
-          { backupLink && <Link to={backupLink}>Click here you aren't automatically redirected...</Link>
+          { backupLink && <>
+            <Link to={backupLink}>Click here you aren't automatically redirected...</Link>
+            <Redirect to={backupLink} />
+            </>
           }
           <button onClick={ () => setLfg(false) }> Stop</button>
         </>:
