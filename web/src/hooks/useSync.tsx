@@ -40,6 +40,7 @@ export default function useSync(
   }, [syncState.todo.turns]);
 
   function playMove(move: any): void {
+    console.log('playMove');
     setSyncState(state => sync.playMove(state, move));
   }
   
