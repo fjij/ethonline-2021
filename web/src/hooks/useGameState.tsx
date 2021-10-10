@@ -63,21 +63,10 @@ export default function useGameState(other: string):
   }
 
   useEffect(() => {
+    console.log(boardState);
     if (boardState.nextPhase === 'play') {
       setCanMove(true);
-    }
-
-    if (boardState.nextPhase === 'resolution') {
-      setBoardState(state => board.resolveSingle(state, randInt.current!));
-    } else if (boardState.nextPhase === 'bonus') {
-      setBoardState(state => board.bonusPhase(state, randInt.current!));
-    } else if (boardState.nextPhase === 'draw') {
-      setBoardState(state => board.drawPhase(state, randInt.current!, isFirst));
-    }
-  }, [boardState.nextPhase, boardState.combatResult?.keywords]);
-
-  useEffect(() => {
-    if (boardState.nextPhase === 'combat') {
+    } else if (boardState.nextPhase === 'combat') {
       const id = boardState.playerState!.active!.card.data.id;
       const otherId = boardState.otherPlayerState!.active!.card.data.id;
       if (data?.id === id) {
@@ -91,8 +80,14 @@ export default function useGameState(other: string):
       } else {
         card.getCardData(id).then(cardData => setData({ card: cardData, id }));
       }
-    } 
-  }, [boardState.nextPhase, data, otherData]);
+    } else if (boardState.nextPhase === 'resolution') {
+      setBoardState(state => board.resolveSingle(state, randInt.current!));
+    } else if (boardState.nextPhase === 'bonus') {
+      setBoardState(state => board.bonusPhase(state, randInt.current!));
+    } else if (boardState.nextPhase === 'draw') {
+      setBoardState(state => board.drawPhase(state, randInt.current!, isFirst));
+    }
+  }, [boardState.nextPhase, boardState.combatResult?.keywords, data, otherData]);
 
   async function onCardMoves(move: CardMove, otherMove: CardMove) {
     setSeed(getSeed(move, otherMove));
