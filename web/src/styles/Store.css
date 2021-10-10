@@ -18,3 +18,37 @@
 .set2 {
   border: 4px solid rgb(29, 16, 143);
 }
+
+@media only screen and (max-width: 1800px) {
+  .set-placeholder {
+    width: 1020px;
+    height: 150px;
+    margin-bottom: 25px;
+  }
+  .oroegins {
+    width: 1020px;
+    height: 150px;
+  }
+
+  .set2 {
+    width: 1020px;
+    height: 150px;
+  }
+}
+
+@media only screen and (max-width: 1050px) {
+  .set-placeholder {
+    width: 680px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
+  .oroegins {
+    width: 680px;
+    height: 100px;
+  }
+
+  .set2 {
+    width: 680px;
+    height: 100px;
+  }
+}

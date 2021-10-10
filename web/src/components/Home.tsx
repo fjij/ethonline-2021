@@ -40,8 +40,8 @@ const homeInfo = [
   {
     id: 2,
     img: "https://ipfs.io/ipfs/bafybeib5v6ff5r35c6tmoxon3zxejumckft5hqr4hh77rnqb6ss5575ojm/37-the%20boys.png",
-    text: "Instructions",
-    link: "/gameInstructions",
+    text: "Rules",
+    link: "/rules",
   },
   {
     id: 1,
