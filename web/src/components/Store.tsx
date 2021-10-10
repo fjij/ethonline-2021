@@ -24,7 +24,7 @@ export default function Store() {
   );
 }
 
-const StoreBanner = (props: StoreBannerProps) => {
+export const StoreBanner = (props: StoreBannerProps) => {
   const { img, name, to } = props;
   return (
     <Link to={to}>
