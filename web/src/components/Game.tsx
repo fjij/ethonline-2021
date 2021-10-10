@@ -155,7 +155,8 @@ export default function Game() {
 
       // Draw cards if less than 4
       setBoardState(state => {
-        let newState, newOtherState;
+        let newState = state.playerState!
+        let newOtherState = state.otherPlayerState!;
         if (isFirst) {
           if (state.playerState!.hand.length < 4) {
             newState = board.draw(state.playerState!, randInt);
