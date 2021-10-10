@@ -6,23 +6,30 @@ import placeholder from "../assets/placeholder.png";
 
 interface CardProps {
   id: number;
-  zoom?: boolean;
   onClick?: () => void;
-  small?: boolean;
+  disabled?: boolean;
+  selected?: boolean;
 }
 
-export default function Card({ id, zoom, onClick }: CardProps) {
+export default function Card({ id, onClick, selected, disabled }: CardProps) {
   const [data, setData] = useState<card.CardData | undefined>();
   useEffect(() => {
     card.getCardData(id).then((data) => setData(data));
   }, [id]);
+
+  function maybeClass(enabled: boolean | undefined, name: string) {
+    return enabled ? ` ${name}`: '';
+  }
   return (
     <div
-      className={"card-container" + (zoom ? " zoom" : "")}
-      onClick={() => (onClick ? onClick() : null)}
+      className='card-container'
+      onClick={() => (onClick && !disabled) ? onClick() : null}
     >
       <img
-        className="card"
+        className={'card' 
+          + maybeClass(selected, 'selected') 
+          + maybeClass(disabled, 'disabled')
+        }
         src={data ? ipfs.getHttpMirror(data.image) : placeholder}
       />
       {data && (
