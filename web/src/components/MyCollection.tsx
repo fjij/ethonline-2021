@@ -1,5 +1,7 @@
-import React from 'react';
-import Card from './Card';
+import React from "react";
+import CollectionDisplayCard from "./CollectionDisplayCard";
+import { ipfs, card } from "../eth";
+import "../styles/CollectionDisplayCard.css";
 
 interface CardProps {
   id: number;
@@ -16,12 +18,13 @@ export default function MyCollection() {
   return (
     <>
       <div className="heading">
-        <h1>Card Collection</h1>
         <section className="collection">
-          {Array.from(Array(28).keys()).map(id => <div className="collection-slot">
-            <Card id={id} key={id} />
-            <br />
-          </div>)}
+          {Array.from(Array(43).keys()).map((id) => (
+            <div className="collection-slot">
+              <CollectionDisplayCard id={id} key={id} />
+              <br />
+            </div>
+          ))}
         </section>
       </div>
     </>
@@ -36,7 +39,7 @@ function Collection() {
       })}
     </section>
   );
-};
+}
 
 function CardDisplay(props: CardProps) {
   const { name, image, description } = props;
@@ -49,4 +52,4 @@ function CardDisplay(props: CardProps) {
       <p className="collection-card-desc">{description}</p>
     </article>
   );
-};
+}
