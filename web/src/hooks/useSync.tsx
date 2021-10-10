@@ -31,6 +31,7 @@ export default function useSync(
     if (syncState.todo.turns.length > 0) {
       setSyncState(state => {
         state.todo.turns.forEach(turn => {
+          console.log('onMoves');
           onMoves(turn.move, turn.otherMove);
         });
         return { ...state, todo: { ...state.todo, turns: [] } };
