@@ -50,7 +50,7 @@ export default function Game() {
 
   const [text, setText] = useState('');
   const [selectedCard, setSelectedCard] = useState<board.FaceUpCardState | undefined>();
-  const [boardState, setupDeck, playCard, canMove] = useGameState(other);
+  const [boardState, setupDeck, playCard, canMove] = useGameState(other, onUpdate);
 
   const deck = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 
@@ -61,6 +61,10 @@ export default function Game() {
     if (selectedCard) {
       playCard(selectedCard);
     }
+  }
+
+  async function onUpdate() {
+    await sleep(500);
   }
 
   return (
@@ -96,7 +100,7 @@ export default function Game() {
         <br />
         <div>
           <h1>Choose a card</h1>
-          <span>
+          <div>
             <h2>Hand</h2>
             {
               boardState.playerState.hand.map(card => card as board.FaceUpCardState)
@@ -108,20 +112,22 @@ export default function Game() {
                   selected={selectedCard?.hash === card.hash}
                 />)
             }
-          </span>
-          <span>
-            <h2>Heroes</h2>
-            {
-              boardState.playerState.heroes.map(card => card as board.FaceUpCardState)
-                .map(card => <Card
-                  onClick={() => setSelectedCard(card)}
-                  id={card.data.id}
-                  key={card.hash}
-                  disabled={!canMove}
-                  selected={selectedCard?.hash === card.hash}
-                />)
-            }
-          </span>
+          </div>
+          { boardState.playerState.heroes.length > 0 &&
+            <div>
+              <h2>Heroes</h2>
+              {
+                boardState.playerState.heroes.map(card => card as board.FaceUpCardState)
+                  .map(card => <Card
+                    onClick={() => setSelectedCard(card)}
+                    id={card.data.id}
+                    key={card.hash}
+                    disabled={!canMove}
+                    selected={selectedCard?.hash === card.hash}
+                  />)
+              }
+            </div>
+          }
           <button onClick={play} disabled={!canMove || !selectedCard}>Confirm</button>
         </div>
       </div>

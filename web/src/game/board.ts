@@ -24,12 +24,12 @@ export interface PlayerState {
   heroes: CardState[];
   hand: CardState[];
   deck: CardState[];
-  overdrawn: boolean;
   active: {
     card: FaceUpCardState;
     isHero: boolean;
   } | null;
   empower: interactions.Empower | null;
+  winner: boolean;
 }
 
 export type Phase = 'play' | 'combat' | 'resolution' | 'bonus' | 'draw';
@@ -39,14 +39,7 @@ export interface BoardState {
   otherPlayerState?: PlayerState;
   nextPhase: Phase;
   combatResult?: interactions.InteractionResult | null;
-}
-
-export function hasLost(state: PlayerState): boolean {
-  return state.overdrawn;
-}
-
-export function hasWon(state: PlayerState): boolean {
-  return state.points >= 3;
+  gameOver: boolean;
 }
 
 export function createPlayerState(deck: CardState[]): PlayerState {
@@ -60,9 +53,9 @@ export function createPlayerState(deck: CardState[]): PlayerState {
     heroes: [],
     hand: [], 
     deck, 
-    overdrawn: false,
     empower: null,
     active: null,
+    winner: false,
   };
 }
 
@@ -188,6 +181,16 @@ export function setupPhase(
   }
 }
 
+function hasLost(state: PlayerState): boolean {
+  return state.hand.length === 0 
+    && state.heroes.length === 0 
+    && state.deck.length === 0;
+}
+
+function hasWon(state: PlayerState): boolean {
+  return state.points >= 3;
+}
+
 export function bonusPhase(
   state: BoardState,
   randInt: (range: number) => number,
@@ -209,7 +212,8 @@ export function bonusPhase(
       newState = drawFor(state, true, randInt, true, 1);
     }
   }
-  return {
+
+  newState = {
     ...newState!,
     otherPlayerState: {
       ...newState!.otherPlayerState!,
@@ -218,6 +222,30 @@ export function bonusPhase(
     combatResult: null,
     nextPhase: 'draw'
   }
+
+  if (hasWon(newState.playerState!)) {
+    return { ...newState, 
+      playerState: { ...newState.playerState!, winner: true } 
+      gameOver: true,
+    };
+  } else if (hasWon(newState.otherPlayerState!)) {
+    return { ...newState, 
+      otherPlayerState: { ...newState.otherPlayerState!, winner: true } 
+      gameOver: true,
+    };
+  } else if (hasLost(newState.playerState!)) {
+    return { ...newState, 
+      otherPlayerState: { ...newState.otherPlayerState!, winner: true } 
+      gameOver: true,
+    };
+  } else if (hasLost(newState.otherPlayerState!)) {
+    return { ...newState, 
+      playerState: { ...newState.playerState!, winner: true } 
+      gameOver: true,
+    };
+  }
+
+  return newState;
 }
 
 export function drawPhase(
@@ -315,7 +343,7 @@ function draw(
     return state;
   }
   if (state.deck.length === 0) {
-    return { ...state, overdrawn: true };
+    return state;
   }
   const index = randInt(state.deck.length);
   const newDeck = [ ...state.deck ];
@@ -362,6 +390,9 @@ function discard(
   count: number = 1,
 ): PlayerState {
   if (count <= 0) {
+    return state;
+  }
+  if (state.hand.length === 0) {
     return state;
   }
   const index = randInt(state.hand.length);

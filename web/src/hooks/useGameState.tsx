@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 
 import { channel, crypto } from '../comms';
 import { card, wallet } from '../eth';
-import { interactions, board } from '../game';
+import { board } from '../game';
 import useSync from '../hooks/useSync';
 
 const gen = require('random-seed');
@@ -23,14 +23,16 @@ interface CardMove {
 
 type Move = SetupMove | CardMove;
 
-export default function useGameState(other: string):
+export default function useGameState(other: string, onUpdate: () => Promise<void>):
 [board.BoardState, (ids: number[]) => void, (card: board.FaceUpCardState) => void, boolean]
 {
   const addresses = [wallet.getAddress(), other];
   addresses.sort();
   const isFirst = addresses[0] === wallet.getAddress();
 
-  const [boardState, setBoardState] = useState<board.BoardState>({ nextPhase: 'play' });
+  const [boardState, setBoardState] = useState<board.BoardState>({
+    nextPhase: 'play', gameOver: false,
+  });
 
   const [data, setData] = useState<{ card: card.CardData, id: number } | undefined>();
   const [otherData, setOtherData] = useState<{ card: card.CardData, id: number } | undefined>();
@@ -64,29 +66,36 @@ export default function useGameState(other: string):
 
   useEffect(() => {
     console.log(boardState);
-    if (boardState.nextPhase === 'play') {
-      setCanMove(true);
-    } else if (boardState.nextPhase === 'combat') {
-      const id = boardState.playerState!.active!.card.data.id;
-      const otherId = boardState.otherPlayerState!.active!.card.data.id;
-      if (data?.id === id) {
-        if (otherData?.id === otherId) {
-          setBoardState(state => board.combatPhase(
-            state, data!.card, otherData!.card, randInt.current!, isFirst
-          ));
+    (async () => {
+      if (boardState.nextPhase === 'play') {
+        await onUpdate();
+        setCanMove(true);
+      } else if (boardState.nextPhase === 'combat') {
+        const id = boardState.playerState!.active!.card.data.id;
+        const otherId = boardState.otherPlayerState!.active!.card.data.id;
+        if (data?.id === id) {
+          if (otherData?.id === otherId) {
+            await onUpdate();
+            setBoardState(state => board.combatPhase(
+              state, data!.card, otherData!.card, randInt.current!, isFirst
+            ));
+          } else {
+            card.getCardData(otherId).then(cardData => setOtherData({ card: cardData, id: otherId }));
+          }
         } else {
-          card.getCardData(otherId).then(cardData => setOtherData({ card: cardData, id: otherId }));
+          card.getCardData(id).then(cardData => setData({ card: cardData, id }));
         }
-      } else {
-        card.getCardData(id).then(cardData => setData({ card: cardData, id }));
+      } else if (boardState.nextPhase === 'resolution') {
+        await onUpdate();
+        setBoardState(state => board.resolveSingle(state, randInt.current!));
+      } else if (boardState.nextPhase === 'bonus') {
+        await onUpdate();
+        setBoardState(state => board.bonusPhase(state, randInt.current!));
+      } else if (boardState.nextPhase === 'draw') {
+        await onUpdate();
+        setBoardState(state => board.drawPhase(state, randInt.current!, isFirst));
       }
-    } else if (boardState.nextPhase === 'resolution') {
-      setBoardState(state => board.resolveSingle(state, randInt.current!));
-    } else if (boardState.nextPhase === 'bonus') {
-      setBoardState(state => board.bonusPhase(state, randInt.current!));
-    } else if (boardState.nextPhase === 'draw') {
-      setBoardState(state => board.drawPhase(state, randInt.current!, isFirst));
-    }
+    })();
   }, [boardState.nextPhase, boardState.combatResult?.keywords, data, otherData]);
 
   async function onCardMoves(move: CardMove, otherMove: CardMove) {
@@ -105,7 +114,7 @@ export default function useGameState(other: string):
   }
 
   function playCard(card: board.FaceUpCardState) {
-    if (canMove) {
+    if (canMove && !boardState.gameOver) {
       const move: CardMove = {
         key: 'card-move', card,
         seed: crypto.b64encode(crypto.randomBytes(SEED_BYTES))
@@ -116,7 +125,7 @@ export default function useGameState(other: string):
   }
 
   function setupDeck(ids: number[]) {
-    if (canMove) {
+    if (canMove && !boardState.gameOver) {
       const deck: board.FaceUpCardState[] = board.createDeck(ids);
       setBoardState(boardState => ({
         ...boardState,
