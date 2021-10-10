@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ipfs, card } from "../eth";
+import { ipfs, card, contract, wallet } from "../eth";
 import { interactions } from "../game";
 import "../styles/CollectionDisplayCard.css";
 import placeholder from "../assets/placeholder.png";
@@ -13,11 +13,14 @@ interface CardProps {
 
 export default function Card({ id, zoom, onClick }: CardProps) {
   const [data, setData] = useState<card.CardData | undefined>();
+  const [quantity, setQuantity] = useState(0);
   useEffect(() => {
+    console.log(wallet.getAddress());
+    contract.balanceOf(wallet.getAddress(), id).then(setQuantity);
     card.getCardData(id).then((data) => setData(data));
   }, [id]);
   return (
-    <div className="collection-card">
+    <div className={"collection-card" + (quantity>0?' owned':'') }>
       <div className="collection-card-picture">
         <img src={data ? ipfs.getHttpMirror(data.image) : placeholder} />
       </div>
@@ -37,6 +40,9 @@ export default function Card({ id, zoom, onClick }: CardProps) {
               <h4 className="collection-card-description">
                 {data.description}
               </h4>
+            </div>
+            <div className="collection-card-quantity">
+              { quantity > 1 && <h1>{quantity}</h1>}
             </div>
           </div>
         )}

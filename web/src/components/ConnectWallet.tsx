@@ -40,15 +40,16 @@ const Instructions = () => {
       <div className="instructions">
         <h1 className="instructions-title">New to Ethereum?</h1>
         <h2>
-          1. Check out <a href="https://metamask.io/faqs">Metamask</a>
+          1. Get <a href="https://metamask.io/faqs">Metamask.</a>
         </h2>
         <h2>
           2. Connect to{" "}
           <a href="https://medium.com/stakingbits/setting-up-metamask-for-polygon-matic-network-838058f6d844">
-            Polygon Network
+            Polygon Network.
           </a>
         </h2>
-        <h2>3. Hit the Connect Wallet button to play Super Card Game!</h2>
+        <h2>3. Click the Connect Wallet button.</h2>
+        <h2>4. Play Super Card Game!</h2>
       </div>
     </>
   );
