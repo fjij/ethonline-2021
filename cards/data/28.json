@@ -1,24 +1,23 @@
 {
-    "name": "A Nime - Teriyaki",
-    "description": "Very cool.",
-    "image": "28-a nime teriyaki.png",
-    "rarity": "rare",
-    "power": 2,
-    "keywords": [
+  "name": "A Nime - Teriyaki",
+  "description": "Possessing a mysterious power, Teriyaki can ignite the barbecue with her index finger.",
+  "image": "28-a nime teriyaki.png",
+  "rarity": "rare",
+  "power": 2,
+  "keywords": [
+    {
+      "name": "empower",
+      "keywords": [
         {
-            "name": "empower",
-            "keywords": [
-                {
-                    "name": "inflict",
-                    "keywords": [
-                        {
-                            "name": "plus",
-                            "value": -1
-                        }
-                    ]
-                }
-            ]
+          "name": "inflict",
+          "keywords": [
+            {
+              "name": "plus",
+              "value": -1
+            }
+          ]
         }
-    ]
-  }
-  
+      ]
+    }
+  ]
+}

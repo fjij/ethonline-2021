@@ -47,3 +47,10 @@ a:hover,
 a:active {
   text-decoration: none;
 }
+
+@media only screen and (max-width: 1250px) {
+  .home-links {
+    display: grid;
+    grid-template-columns: 375px;
+  }
+}

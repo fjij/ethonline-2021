@@ -1,11 +1,13 @@
-import React from 'react';
-import Matchmaking from './Matchmaking';
+import React from "react";
+import Matchmaking from "./Matchmaking";
+import "../styles/Play.css";
+import playBackground from "../assets/playbackgroundfull.png";
 
 export default function Play() {
-    return (
-        <>
-        <h1>Play</h1>
-        <Matchmaking/>
-        </>
-    )
+  return (
+    <>
+      <img className="play-background" src={playBackground}></img>
+      <Matchmaking />
+    </>
+  );
 }

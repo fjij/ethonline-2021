@@ -1,18 +1,17 @@
 {
-    "name": "A Nime - Mirage",
-    "description": "Mirage loves vidya. She's spent over 4000 hours on this one MMO this past year. Pretty sure she's still living in her mom's basement.",
-    "image": "23-a nime mirage.png",
-    "rarity": "rare",
-    "power": 2,
-    "keywords": [
+  "name": "A Nime - Mirage",
+  "description": "Mirage loves Aisle of Banishment. She's spent over 4000 hours on this one MMO this past year. Pretty sure she's still living in her mom's basement.",
+  "image": "23-a nime mirage.png",
+  "rarity": "rare",
+  "power": 2,
+  "keywords": [
+    {
+      "name": "empower",
+      "keywords": [
         {
-            "name": "empower",
-            "keywords": [
-                {
-                    "name": "squelch"
-                }
-            ]
+          "name": "squelch"
         }
-    ]
-  }
-  
+      ]
+    }
+  ]
+}
