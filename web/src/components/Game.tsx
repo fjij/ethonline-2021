@@ -29,6 +29,22 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function PlayerStatus({state, name}: {state: board.PlayerState, name: string}) {
+  let text = `Deck: ${state.deck.length}`
+  + ` | Hand: ${state.hand.length}`
+  + ` | Heroes: ${state.heroes.length}`
+  + ` | Points: ${state.points}`;
+  if (state.empower) {
+    text += ` | ${interactions.keywordToText(state.empower)}`
+  }
+  return (
+    <div>
+      <h3>{name}</h3>
+      <p>{text}</p>
+    </div>
+  );
+}
+
 export default function Game() {
 
   const { other }: any = useParams();
@@ -49,6 +65,27 @@ export default function Game() {
 
   const playMove = useSync(onMoves, channel.CreateGameChannel(other), other);
 
+  function doDraw(
+    isOther: boolean,
+    randInt: (range: number) => number, 
+    isHero: boolean, 
+    count: number
+  ) {
+    if (isOther) {
+      setBoardState(state => ({
+        ...state,
+        otherPlayerState: board.draw(
+          state.otherPlayerState!, randInt, isHero, count)
+      }));
+    } else {
+      setBoardState(state => ({
+        ...state,
+        playerState: board.draw(
+          state.playerState!, randInt, isHero, count)
+      }));
+    }
+  }
+
   async function handleKeywordResult(
     result: interactions.OwnedKeywordResult,
     randInt: (range: number) => number
@@ -59,19 +96,7 @@ export default function Game() {
       case 'draw':
       {
         console.log(JSON.stringify(keyword));
-        if (result.isOther) {
-          setBoardState(state => ({
-            ...state,
-            otherPlayerState: board.draw(
-              state.otherPlayerState!, randInt, false, keyword.value)
-          }));
-        } else {
-          setBoardState(state => ({
-            ...state,
-            playerState: board.draw(
-              state.playerState!, randInt, false, keyword.value)
-          }));
-        }
+        doDraw(result.isOther, randInt, false, keyword.value);
         break;
       }
       case 'discard':
@@ -136,6 +161,11 @@ export default function Game() {
 
     if (move.key === 'card-move' && otherMove.key === 'card-move') {
 
+      const isHero = boardState.playerState!.heroes
+        .map(c => c.hash).indexOf(move.card.hash) !== -1;
+      const otherIsHero = boardState.otherPlayerState!.heroes
+        .map(c => c.hash).indexOf(otherMove.card.hash) !== -1;
+
       setBoardState(state => board.playCards(state, move.card, otherMove.card));
       setSelectedCard(undefined);
       setMyCard(move.card);
@@ -143,15 +173,60 @@ export default function Game() {
       const [cardData, otherCardData] = await Promise.all([
         card.getCardData(move.card.data.id), card.getCardData(otherMove.card.data.id),
       ]);
+      const empower = boardState.playerState!.empower;
+      const otherEmpower = boardState.playerState!.empower;
+      if (empower) {
+        await sleep(800);
+        setBoardState(state => ({
+          ...state,
+          playerState: board.consumeEmpower(state.playerState!)
+        }));
+      }
+      if (otherEmpower) {
+        await sleep(800);
+        setBoardState(state => ({
+          ...state,
+          otherPlayerState: board.consumeEmpower(state.otherPlayerState!)
+        }));
+      }
+
+      const keywords = empower ? [ ...cardData.keywords, ...empower.keywords] : cardData.keywords;
+      const otherKeywords = otherEmpower ? [ ...otherCardData.keywords, ...otherEmpower.keywords] : otherCardData.keywords;
 
       const result = interactions.computeInteraction(
-        cardData.power, cardData.keywords,
-        otherCardData.power, otherCardData.keywords,
+        cardData.power, keywords,
+        otherCardData.power, otherKeywords,
         isFirst, randInt);
 
       for (let i = 0; i < result.keywords.length; i ++) {
         await handleKeywordResult(result.keywords[i], randInt);
       }
+
+      await sleep(800);
+
+      if (result.won) {
+        setText('you\'re winner!');
+        if (isHero) {
+          setBoardState(state => ({ ...state, playerState: 
+            { ...state.playerState!, points: state.playerState!.points + 1}
+          }));
+        } else {
+          // Draw hero card
+          doDraw(false, randInt, true, 1);
+        }
+      } else {
+        setText('you\'re NOT winner!');
+        if (isHero) {
+          setBoardState(state => ({ ...state, otherPlayerState: 
+            { ...state.otherPlayerState!, points: state.otherPlayerState!.points + 1}
+          }));
+        } else {
+          // Draw hero for opponent
+          doDraw(true, randInt, true, 1);
+        }
+      }
+
+      await sleep(800);
 
       // Draw cards if less than 4
       setBoardState(state => {
@@ -177,12 +252,6 @@ export default function Game() {
           otherPlayerState: newOtherState,
         }
       });
-
-      if (result.won) {
-        setText('you\'re winner!');
-      } else {
-        setText('you\'re NOT winner!');
-      }
 
     } else if (move.key === 'setup-move' && otherMove.key === 'setup-move') {
 
@@ -255,9 +324,11 @@ export default function Game() {
     }
     { boardState.playerState && boardState.otherPlayerState &&
       <div className="board">
-        <h1>FIGHT</h1>
+        <PlayerStatus state={boardState.playerState} name='Me' />
+        <span>vs</span>
+        <PlayerStatus state={boardState.otherPlayerState} name='Opponent' />
         <div>
-          <p>{ text }</p>
+          <h1>FIGHT</h1>
           {
             myCard && <Card id={myCard.data.id} disabled />
           }
@@ -265,34 +336,38 @@ export default function Game() {
           {
             otherCard && <Card id={otherCard.data.id} disabled />
           }
+          <p>{ text }</p>
         </div>
         <br />
         <div>
-          <p>Deck: {boardState.playerState.deck.length}</p>
           <h1>Choose a card</h1>
+          <span>
+            <h2>Hand</h2>
+            {
+              boardState.playerState.hand.map(card => card as board.FaceUpCardState)
+                .map(card => <Card
+                  onClick={() => setSelectedCard(card)}
+                  id={card.data.id}
+                  key={card.hash}
+                  disabled={!canMove}
+                  selected={selectedCard?.hash === card.hash}
+                />)
+            }
+          </span>
+          <span>
+            <h2>Heroes</h2>
+            {
+              boardState.playerState.heroes.map(card => card as board.FaceUpCardState)
+                .map(card => <Card
+                  onClick={() => setSelectedCard(card)}
+                  id={card.data.id}
+                  key={card.hash}
+                  disabled={!canMove}
+                  selected={selectedCard?.hash === card.hash}
+                />)
+            }
+          </span>
           <button onClick={play} disabled={!canMove || !selectedCard}>Confirm</button>
-          <h2>Hand</h2>
-          {
-            boardState.playerState.hand.map(card => card as board.FaceUpCardState)
-              .map(card => <Card
-                onClick={() => setSelectedCard(card)}
-                id={card.data.id}
-                key={card.hash}
-                disabled={!canMove}
-                selected={selectedCard?.hash === card.hash}
-              />)
-          }
-          <h2>Heroes</h2>
-          {
-            boardState.playerState.heroes.map(card => card as board.FaceUpCardState)
-              .map(card => <Card
-                onClick={() => setSelectedCard(card)}
-                id={card.data.id}
-                key={card.hash}
-                disabled={!canMove}
-                selected={selectedCard?.hash === card.hash}
-              />)
-          }
         </div>
       </div>
     }
