@@ -58,6 +58,7 @@ export default function Game() {
     switch (keyword.name) {
       case 'draw':
       {
+        console.log(JSON.stringify(keyword));
         if (result.isOther) {
           setBoardState(state => ({
             ...state,
@@ -75,6 +76,7 @@ export default function Game() {
       }
       case 'discard':
       {
+        console.log(JSON.stringify(keyword));
         if (result.isOther) {
           setBoardState(state => ({
             ...state,
@@ -92,6 +94,7 @@ export default function Game() {
       }
       case 'empower':
       {
+        console.log(JSON.stringify(keyword));
         if (result.isOther) {
           setBoardState(state => ({
             ...state,
@@ -119,7 +122,7 @@ export default function Game() {
       case 'inflict':
       case 'squelch':
       {
-        console.log(JSON.stringify(result.result));
+        console.log(JSON.stringify(keyword));
       }
     }
     console.log(result);
