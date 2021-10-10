@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Card from './Card';
-import { channel, crypto } from '../comms';
-import { card, wallet } from '../eth';
 import { interactions, board } from '../game';
+import themeDecks from '../game/theme-decks';
 import useGameState from '../hooks/useGameState';
 
 import '../styles/Game.css';
@@ -180,12 +179,23 @@ export default function Game() {
     <div className="game">
     { !boardState.playerState && 
       <div>
-        <button onClick={() => setupDeck(deck)}>Setup Deck</button>
+        <h1>Theme Decks</h1>
+        <br />
+        { themeDecks.map(themeDeck => 
+          <div className='theme-deck' key={themeDeck.name}>
+            <h2>{themeDeck.name}</h2>
+            <p>{themeDeck.description}</p>
+            <br />
+            <Card id={themeDeck.cover} disabled/>
+            <br />
+            <button onClick={() => setupDeck(themeDeck.deck)}>Play Deck</button>
+          </div>
+        )}
       </div>
     }
     { boardState.playerState && !boardState.otherPlayerState &&
       <div>
-        Waiting for other player to setup deck...
+        Waiting for other player to choose deck...
       </div>
     }
     { boardState.playerState && boardState.otherPlayerState &&
