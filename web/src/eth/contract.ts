@@ -3,19 +3,18 @@ import CardsArtifact from "../contracts/Cards.json";
 import deployment from "../contracts/deployment.json";
 
 let contract: ethers.Contract;
+let baseUri: string | null = null;
 
 export async function init(signer: ethers.providers.JsonRpcSigner) {
   contract = new ethers.Contract(deployment.address, CardsArtifact.abi, signer);
 }
 
 export async function getUri(id: number): Promise<string> {
-  const uri: string = await contract.uri(0);
-  return uri.replace("{id}", `${id}`);
-}
-
-export async function getMetadata(ids: number[]): Promise<string[]> {
-  const uri: string = await contract.uri(0);
-  return ids.map(id => uri.replace("{id}", `${id}`));
+  if (!baseUri) {
+    const uri: string = await contract.uri(0);
+    baseUri = uri;
+  }
+  return baseUri.replace("{id}", `${id}`);
 }
 
 export async function balanceOf(address: string, id: number): Promise<number> {

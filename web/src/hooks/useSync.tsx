@@ -13,7 +13,8 @@ export default function useSync(
     return message.listen((msg) => {
       setSyncState(state => sync.handleMessage(state, msg));
     }, channel);
-  }, [channel]);
+  // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     if (syncState.todo.outgoing.length > 0) {
@@ -22,7 +23,8 @@ export default function useSync(
       });
       setSyncState(state => ({ ...state, todo: { ...state.todo, outgoing: [] }}));
     }
-  }, [syncState.todo.outgoing, channel]);
+  // eslint-disable-next-line
+  }, [syncState.todo.outgoing]);
 
 
   useEffect(() => {
@@ -32,7 +34,8 @@ export default function useSync(
       });
       setSyncState(state => ({ ...state, todo: { ...state.todo, turns: [] } }));
     }
-  }, [syncState.todo.turns, onMoves]);
+  // eslint-disable-next-line
+  }, [syncState.todo.turns]);
 
   function playMove(move: any): void {
     console.log('playMove');

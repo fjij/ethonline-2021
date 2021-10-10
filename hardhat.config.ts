@@ -30,6 +30,7 @@ const config: HardhatUserConfig = {
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 3,
     },
+
     mumbai: {
       url: 'https://rpc-mumbai.maticvigil.com/',
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],

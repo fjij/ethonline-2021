@@ -23,27 +23,27 @@
     0px 0px 5px black,
     0px 0px 5px black,
     0px 0px 5px black;
+  opacity: 0;
   animation: textAppear 2.5s ease-in;
-  opacity: 0%;
 }
 
 @keyframes textAppear {
   0% {
-    opacity: 0%;
+    opacity: 0;
     transform: translate(-50%, -50%) scale(0%);
   }
   10% {
-    opacity: 100%;
+    opacity: 100;
     transform: translate(-50%, -50%) scale(130%);
   }
   20% {
     transform: translate(-50%, -50%) scale(100%);
   }
   90% {
-    opacity: 100%;
+    opacity: 100;
   }
   100% {
-    opacity: 0%;
+    opacity: 0;
   }
 }
 
@@ -88,9 +88,7 @@
   margin: 5px;
   animation: 0.25s ease-in 0.25s 1 fadeIn;
   height: 200px;
-  width: 0px;
-  animation-fill-mode: forwards;
-  opacity: 0%;
+  width: 150px;
 }
 
 .game-card-slot.destroyed {
