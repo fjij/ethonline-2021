@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import useInterval from '../hooks/useInterval';
 import { message, channel, matchmaking } from '../comms';
 
@@ -10,6 +10,8 @@ export default function Matchmaking() {
   const [lfg, setLfg] = useState(false);
   const [state, setState] = useState<matchmaking.State>({ key: 'none' });
   const [negotiationCounter, setNegotiationCounter] = useState(0);
+
+  const [backupLink, setBackupLink] = useState<string>();
 
   const history = useHistory();
 
@@ -44,6 +46,7 @@ export default function Matchmaking() {
   useEffect(() => {
     if (state.key === 'found') {
       history.push(`/game/${state.other}`);
+      setBackupLink(`/game/${state.other}`);
     }
   // eslint-disable-next-line
   }, [state.key, history]);
@@ -53,6 +56,8 @@ export default function Matchmaking() {
       { lfg ?
         <>
           <p>{ state.key }</p>
+          { backupLink && <Link to={backupLink}>Click here you aren't automatically redirected...</Link>
+          }
           <button onClick={ () => setLfg(false) }> Stop</button>
         </>:
         <>
