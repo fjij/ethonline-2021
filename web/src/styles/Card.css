@@ -46,7 +46,7 @@
   color: black;
   text-shadow: 0px 0px 5px white, 0px 0px 5px white, 0px 0px 5px white,
     0px 0px 5px white;
-  opacity: 0%;
+  opacity: 0;
   transition: opacity 0.2s;
   width: 200px;
 }
@@ -56,7 +56,7 @@
   top: 10px;
   right: 20px;
   color: white;
-  opacity: 0%;
+  opacity: 0;
   transition: opacity 0.2s;
   text-shadow: 0px 0px 10px black, 0px 0px 10px black, 0px 0px 10px black,
     0px 0px 10px black;
@@ -69,20 +69,20 @@
   transform: translate(-50%, 0%);
   width: 150px;
   color: white;
-  opacity: 0%;
+  opacity: 0;
   transition: opacity 0.2s;
   background-color: rgba(0, 0, 0, 0.7);
   padding: 5px;
 }
 
 .card-container:hover .card-text {
-  opacity: 100%;
+  opacity: 1;
 }
 
 .card-container:hover .card-power {
-  opacity: 100%;
+  opacity: 1;
 }
 
 .card-container:hover .card-rulebox {
-  opacity: 100%;
+  opacity: 1;
 }
