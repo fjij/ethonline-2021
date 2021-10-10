@@ -1,0 +1,68 @@
+.layout {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  max-width: 1900px;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+}
+
+.player2 {
+  display: flex;
+  flex-direction: row;
+}
+
+.box {
+  width: 150px;
+  height: 200px;
+  background-color: #aa1111;
+  border-color: black;
+  border-style: solid;
+}
+
+.player2used {
+  display: flex;
+  margin-right: 100px;
+}
+
+.player2discard {
+  margin-right: 10px;
+}
+
+.player2hand {
+  display: flex;
+}
+
+.player2bench {
+  display: flex;
+  flex-direction: row;
+}
+
+.player2deck {
+  display: flex;
+  margin-left: 100px;
+}
+
+.player2back {
+  margin-left: 10px;
+}
+
+.player-play {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.box-play {
+  width: 225px;
+  height: 300px;
+  background-color: #261766;
+  border-color: black;
+  border-style: solid;
+}
+
+.left-player {
+  margin-right: 50px;
+}

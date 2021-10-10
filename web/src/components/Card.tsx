@@ -9,9 +9,10 @@ interface CardProps {
   onClick?: () => void;
   disabled?: boolean;
   selected?: boolean;
+  hero?: boolean;
 }
 
-export default function Card({ id, onClick, selected, disabled }: CardProps) {
+export default function Card({ id, onClick, selected, disabled, hero }: CardProps) {
   const [data, setData] = useState<card.CardData | undefined>();
   useEffect(() => {
     card.getCardData(id).then((data) => setData(data));
@@ -29,6 +30,7 @@ export default function Card({ id, onClick, selected, disabled }: CardProps) {
         className={'card' 
           + maybeClass(selected, 'selected') 
           + maybeClass(disabled, 'disabled')
+          + maybeClass(hero, 'hero')
         }
         src={data ? ipfs.getHttpMirror(data.image) : placeholder}
       />

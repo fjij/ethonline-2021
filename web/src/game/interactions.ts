@@ -19,7 +19,7 @@ export interface Flip {
 }
 
 export interface FlipResult {
-  name: 'flip';
+  name: 'flip-result';
   keywords: Keyword[];
   heads: boolean;
 }
@@ -162,7 +162,7 @@ export function computeInteraction(
         } else {
           allKeywords.push({ keyword: keyword.keywords[1], isOther });
         }
-        emittedKeywords.push({ isOther, result: { ...keyword, heads } });
+        emittedKeywords.push({ isOther, result: { ...keyword, name: 'flip-result', heads } });
         break;
       }
       case 'inflict': {
@@ -222,6 +222,22 @@ export function computeInteraction(
     won: stats.power > otherStats.power,
     otherWon: otherStats.power > stats.power,
   };
+}
+
+export function keywordToTextPlus(kw: Keyword | FlipResult | FailedKeyword): string {
+  switch(kw.name) {
+    case 'flip-result': {
+      if (kw.heads) {
+        return `Flip Heads: ${keywordToText(kw.keywords[0])}`;
+      } else {
+        return `Flip Tails: ${keywordToText(kw.keywords[1])}`;
+      }
+    }
+    case 'fail': {
+      return `${keywordToText(kw.keyword)} - Failed due to Immune`;
+    }
+  }
+  return keywordToText(kw);
 }
 
 export function keywordToText(kw: Keyword): string {

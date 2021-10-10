@@ -217,10 +217,6 @@ export function bonusPhase(
 
   newState = {
     ...newState!,
-    otherPlayerState: {
-      ...newState!.otherPlayerState!,
-      active: null,
-    },
     combatResult: null,
     nextPhase: 'draw'
   }
