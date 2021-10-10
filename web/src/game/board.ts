@@ -103,6 +103,7 @@ export function draw(
   const newDeck = [ ...state.deck ];
   newDeck.splice(index, 1);
   if (isHero) {
+    console.log('draw hero');
     return draw({
       ...state,
       deck: newDeck,

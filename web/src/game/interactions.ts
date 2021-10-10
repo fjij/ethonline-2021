@@ -220,7 +220,7 @@ export function computeInteraction(
   return {
     keywords: emittedKeywords,
     won: stats.power > otherStats.power,
-    otherWon: stats.power > otherStats.power,
+    otherWon: otherStats.power > stats.power,
   };
 }
 
