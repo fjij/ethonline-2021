@@ -1,0 +1,16 @@
+.set-placeholder {
+  width: 1700px;
+  height: 250px;
+  background-color: rgba(87, 54, 52, 0.1);
+  margin: auto;
+  margin-bottom: 40px;
+  transition: transform 0.2s;
+}
+
+.set-placeholder:hover {
+  transform: scale(1.01);
+}
+
+.oroegins {
+  border: 4px solid #000;
+}
