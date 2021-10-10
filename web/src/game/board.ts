@@ -42,7 +42,7 @@ export function hasWon(state: PlayerState): boolean {
 
 export function createPlayerState(deck: CardState[]): PlayerState {
   const hashes = deck.map(card => card.hash);
-  const duplicates = hashes.filter((hash, idx) => hash.indexOf(hash) !== idx);
+  const duplicates = hashes.filter((hash, idx) => hashes.indexOf(hash) !== idx);
   if (duplicates.length > 0) {
     throw new Error('duplicate card state in deck');
   }
