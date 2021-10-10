@@ -13,6 +13,7 @@ export default function useSync(
     return message.listen((msg) => {
       setSyncState(state => sync.handleMessage(state, msg));
     }, channel);
+  // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -22,6 +23,7 @@ export default function useSync(
       });
       setSyncState(state => ({ ...state, todo: { ...state.todo, outgoing: [] }}));
     }
+  // eslint-disable-next-line
   }, [syncState.todo.outgoing]);
 
 
@@ -32,6 +34,7 @@ export default function useSync(
       });
       setSyncState(state => ({ ...state, todo: { ...state.todo, turns: [] } }));
     }
+  // eslint-disable-next-line
   }, [syncState.todo.turns]);
 
   function playMove(move: any): void {
