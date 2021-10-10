@@ -1,5 +1,5 @@
-import { contract, ipfs } from '../eth';
-import { interactions } from '../game';
+import { contract, ipfs } from "../eth";
+import { interactions } from "../game";
 
 export interface CardData {
   name: string;
@@ -7,10 +7,10 @@ export interface CardData {
   image: string;
   power: number;
   keywords: interactions.Keyword[];
+  rarity: string;
 }
 
 export async function getCardData(id: number): Promise<CardData> {
   const uri = await contract.getUri(id);
   return await ipfs.getData(uri);
 }
-
