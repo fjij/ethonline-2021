@@ -118,3 +118,13 @@
     width: 0px;
   }
 }
+
+.theme-deck {
+  width: 650px;
+  background-color: white;
+  border-radius: 16px;
+  margin-bottom: 1.5em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 15px;
+}
