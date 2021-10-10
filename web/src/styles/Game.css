@@ -1,68 +1,120 @@
-.layout {
-  margin-top: 15px;
+.game {
+  margin-top: 2.5rem;
+}
+
+.game-hand {
   display: flex;
-  flex-direction: column;
-  max-width: 1900px;
-  margin-left: auto;
-  margin-right: auto;
+  justify-content: center;
+}
+
+.game-arena {
+  margin-top: 20px;
+}
+
+.game-card-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  z-index: 1;
+  width: 350px;
+  color: white;
+  text-shadow: 0px 0px 5px black,
+    0px 0px 5px black,
+    0px 0px 5px black,
+    0px 0px 5px black;
+  animation: textAppear 2.5s ease-in;
+  opacity: 0%;
+}
+
+@keyframes textAppear {
+  0% {
+    opacity: 0%;
+    transform: translate(-50%, -50%) scale(0%);
+  }
+  10% {
+    opacity: 100%;
+    transform: translate(-50%, -50%) scale(130%);
+  }
+  20% {
+    transform: translate(-50%, -50%) scale(100%);
+  }
+  90% {
+    opacity: 100%;
+  }
+  100% {
+    opacity: 0%;
+  }
+}
+
+.player-status {
+  margin-left: 20px;
+  margin-right: 20px;
+  width: 140px;
+}
+
+.game-arena-flex {
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
-.player2 {
-  display: flex;
-  flex-direction: row;
+.game-hero-divider {
+  width: 3px;
+  margin: 10px;
+  background-color: black;
 }
 
-.box {
-  width: 150px;
+.game-bottom {
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+}
+
+.game-vs {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.game-card-slot-hard {
+  margin: 5px;
   height: 200px;
-  background-color: #aa1111;
-  border-color: black;
-  border-style: solid;
+  width: 150px;
+  background-color: #ddd;
+  border-radius: 8px;
+  position: relative;
 }
 
-.player2used {
-  display: flex;
-  margin-right: 100px;
+.game-card-slot {
+  margin: 5px;
+  animation: 0.25s ease-in 0.25s 1 fadeIn;
+  height: 200px;
+  width: 0px;
+  animation-fill-mode: forwards;
+  opacity: 0%;
 }
 
-.player2discard {
-  margin-right: 10px;
+.game-card-slot.destroyed {
+  animation: fadeOut 0.5s ease-out;
 }
 
-.player2hand {
-  display: flex;
+@keyframes fadeIn {
+  0% {
+    opacity: 0%;
+    width: 0px;
+  }
+  100% {
+    opacity: 100%;
+    width: 150px;
+  }
 }
 
-.player2bench {
-  display: flex;
-  flex-direction: row;
-}
-
-.player2deck {
-  display: flex;
-  margin-left: 100px;
-}
-
-.player2back {
-  margin-left: 10px;
-}
-
-.player-play {
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
-
-.box-play {
-  width: 225px;
-  height: 300px;
-  background-color: #261766;
-  border-color: black;
-  border-style: solid;
-}
-
-.left-player {
-  margin-right: 50px;
+@keyframes fadeOut {
+  0% {
+    opacity: 100%;
+    width: 150px;
+  }
+  100% {
+    opacity: 0%;
+    width: 0px;
+  }
 }

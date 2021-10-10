@@ -1,7 +1,12 @@
 import React from "react";
-import "../styles/Game.css";
+import "../styles/GameLayout.css";
+import { board } from '../game';
 
-export default function Game() {
+interface GameLayoutProps {
+
+}
+
+export default function GameLayout({}) {
   return (
     <>
       <div className="layout">
