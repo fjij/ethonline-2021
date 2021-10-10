@@ -3,11 +3,11 @@
   "description": "Having been rejected by its family, the Roe Creature has grown a voracious appetite for its peers.",
   "image": "2-roe-creature.png",
   "rarity": "common",
-  "power": "3",
+  "power": 0,
   "keywords":[
     {
       "name": "plus",
-      "value": 1
+      "value": 30
     }
   ]
 }
