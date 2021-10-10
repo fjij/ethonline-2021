@@ -75,7 +75,7 @@ export default function useGameState(other: string):
             state, data!.card, otherData!.card, randInt.current!, isFirst
           ));
         } else {
-          card.getCardData(id).then(cardData => setData({ card: cardData, id }));
+          card.getCardData(otherId).then(cardData => setData({ card: cardData, id: otherId }));
         }
       } else {
         card.getCardData(id).then(cardData => setData({ card: cardData, id }));
