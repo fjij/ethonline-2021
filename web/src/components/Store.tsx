@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/Store.css";
 import banner0 from "../assets/oroeginsBanner.png";
 import placeholderbanner from "../assets/placeholderbanner.png";
+import set2 from "../assets/set2.png";
 import { Link } from "react-router-dom";
 
 interface StoreBannerProps {
@@ -41,8 +42,8 @@ const banners = [
     to: "/collection/oroegin",
   },
   {
-    img: placeholderbanner,
-    name: "set-placeholder",
+    img: set2,
+    name: "set2",
     to: "/store",
   },
   {
