@@ -32,7 +32,7 @@ export default function Card({ id, zoom, onClick }: CardProps) {
                   <h3 key={idx}>Ability: {text}.</h3>
                 ))}
               <h3>Power: {data.power}</h3>
-              <h3>Rarity: {data.rarity}</h3>
+              <h3 className="collection-card-rarity">Rarity: {data.rarity}</h3>
               <div className="line"></div>
               <h4 className="collection-card-description">
                 {data.description}

@@ -14,7 +14,7 @@ export default function Home() {
     <div className="home">
       <div className="home-links">
         {homeInfo.map((card) => {
-          return <HomeCard {...card}></HomeCard>;
+          return <HomeCard key={card.id} {...card}></HomeCard>;
         })}
       </div>
     </div>
@@ -38,21 +38,21 @@ const HomeCard = (props: HomeCardProps) => {
 
 const homeInfo = [
   {
+    id: 2,
+    img: "https://ipfs.io/ipfs/bafybeib5v6ff5r35c6tmoxon3zxejumckft5hqr4hh77rnqb6ss5575ojm/37-the%20boys.png",
+    text: "Instructions",
+    link: "/gameInstructions",
+  },
+  {
     id: 1,
-    img: "https://ipfs.io/ipfs/bafybeigrvkhrn2egu4yhjivmbd2yxqnojlbaiatfwlquuxwymi4jfhe4fu/2-roe-creature.png",
+    img: "https://ipfs.io/ipfs/bafybeib5v6ff5r35c6tmoxon3zxejumckft5hqr4hh77rnqb6ss5575ojm/9-overtime%20dude.png",
     text: "Play",
     link: "/play",
   },
   {
-    id: 2,
-    img: "https://ipfs.io/ipfs/bafybeigrvkhrn2egu4yhjivmbd2yxqnojlbaiatfwlquuxwymi4jfhe4fu/2-roe-creature.png",
-    text: "Collection",
-    link: "/myCollection",
-  },
-  {
     id: 3,
-    img: "https://ipfs.io/ipfs/bafybeigrvkhrn2egu4yhjivmbd2yxqnojlbaiatfwlquuxwymi4jfhe4fu/2-roe-creature.png",
-    text: "Store",
+    img: "https://ipfs.io/ipfs/bafybeib5v6ff5r35c6tmoxon3zxejumckft5hqr4hh77rnqb6ss5575ojm/22-a%20nime%20lily.png",
+    text: "Collections",
     link: "/store",
   },
 ];

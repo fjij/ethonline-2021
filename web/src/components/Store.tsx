@@ -2,10 +2,12 @@ import React from "react";
 import "../styles/Store.css";
 import banner0 from "../assets/oroeginsBanner.png";
 import placeholderbanner from "../assets/placeholderbanner.png";
+import { Link } from "react-router-dom";
 
 interface StoreBannerProps {
   img: string;
   name: string;
+  to: string;
 }
 
 export default function Store() {
@@ -22,11 +24,13 @@ export default function Store() {
 }
 
 const StoreBanner = (props: StoreBannerProps) => {
-  const { img, name } = props;
+  const { img, name, to } = props;
   return (
-    <article className="set-placeholder">
-      <img className={name} src={img}></img>
-    </article>
+    <Link to={to}>
+      <article className="set-placeholder">
+        <img className={name} src={img}></img>
+      </article>
+    </Link>
   );
 };
 
@@ -34,17 +38,21 @@ const banners = [
   {
     img: banner0,
     name: "oroegins",
+    to: "/collection/oroegin",
   },
   {
     img: placeholderbanner,
     name: "set-placeholder",
+    to: "/store",
   },
   {
     img: placeholderbanner,
     name: "set-placeholder",
+    to: "/store",
   },
   {
     img: placeholderbanner,
     name: "set-placeholder",
+    to: "/store",
   },
 ];

@@ -1,28 +1,51 @@
-import React, { useState } from 'react';
-import { wallet } from '../eth';
+import React, { useState } from "react";
+import { wallet } from "../eth";
 
 interface ConnectWalletProps {
-  onConnected: () => void,
+  onConnected: () => void;
 }
 
-export default function ConnectWallet({
-  onConnected,
-}: ConnectWalletProps) {
+export default function ConnectWallet({ onConnected }: ConnectWalletProps) {
   const [errorMsg, setErrorMsg] = useState<undefined | string>();
   async function connect() {
     try {
       await wallet.connectWallet();
       setErrorMsg(undefined);
       onConnected();
-    } catch(e: any) {
+    } catch (e: any) {
       setErrorMsg(e.message);
     }
   }
   return (
     <div className="connect-wallet">
-      { !wallet.isConnected() && <button onClick={connect}>Connect Wallet</button> }
-      { wallet.isConnected() && <p>Connected</p> }
-      { errorMsg && <p>Error: {errorMsg}</p> }
+      {!wallet.isConnected() && (
+        <>
+          <Instructions />
+          <button onClick={connect}>Connect Wallet</button>
+        </>
+      )}
+      {wallet.isConnected() && <p>Connected</p>}
+      {errorMsg && <p>Error: {errorMsg}</p>}
     </div>
+
+    //wallet.hasEthereum()
   );
 }
+
+const Instructions = () => {
+  return (
+    <>
+      <h1>New to Ethereum?</h1>
+      <h2>
+        1. Check out <a href="https://metamask.io/faqs">Metamask</a>
+      </h2>
+      <h2>
+        2. Connect to{" "}
+        <a href="https://medium.com/stakingbits/setting-up-metamask-for-polygon-matic-network-838058f6d844">
+          Polygon Network
+        </a>
+      </h2>
+      <h2>3. Hit the Connect Wallet button to play Super Card Game!</h2>
+    </>
+  );
+};

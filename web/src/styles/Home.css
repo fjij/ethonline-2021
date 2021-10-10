@@ -3,7 +3,7 @@
 }
 
 .home {
-  padding-top: 8rem;
+  padding-top: 5rem;
 }
 
 .center {
@@ -11,7 +11,7 @@
 }
 
 .home-card {
-  padding: 2rem;
+  padding: 3rem 1rem 2rem;
   background-color: white;
   border-radius: 20px;
   transition: transform 0.2s;
@@ -24,8 +24,8 @@
 .home-card img {
   border: 20px solid #555;
   border-radius: 10px;
-  height: 400px;
-  width: 300px;
+  height: 300px;
+  width: 225px;
 }
 
 .home-links {
