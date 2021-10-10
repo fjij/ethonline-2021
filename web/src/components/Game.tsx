@@ -7,22 +7,6 @@ import { card, wallet } from '../eth';
 import { interactions, board } from '../game';
 import useGameState from '../hooks/useGameState';
 
-const gen = require('random-seed');
-
-interface SetupMove {
-  key: 'setup-move';
-  deck: board.FaceDownCardState[];
-  seed: string;
-}
-
-interface CardMove {
-  key: 'card-move';
-  card: board.FaceUpCardState;
-  seed: string;
-}
-
-type Move = SetupMove | CardMove;
-
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

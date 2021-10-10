@@ -225,22 +225,22 @@ export function bonusPhase(
 
   if (hasWon(newState.playerState!)) {
     return { ...newState, 
-      playerState: { ...newState.playerState!, winner: true } 
+      playerState: { ...newState.playerState!, winner: true },
       gameOver: true,
     };
   } else if (hasWon(newState.otherPlayerState!)) {
     return { ...newState, 
-      otherPlayerState: { ...newState.otherPlayerState!, winner: true } 
+      otherPlayerState: { ...newState.otherPlayerState!, winner: true },
       gameOver: true,
     };
   } else if (hasLost(newState.playerState!)) {
     return { ...newState, 
-      otherPlayerState: { ...newState.otherPlayerState!, winner: true } 
+      otherPlayerState: { ...newState.otherPlayerState!, winner: true },
       gameOver: true,
     };
   } else if (hasLost(newState.otherPlayerState!)) {
     return { ...newState, 
-      playerState: { ...newState.playerState!, winner: true } 
+      playerState: { ...newState.playerState!, winner: true },
       gameOver: true,
     };
   }
