@@ -32,6 +32,7 @@ export default function Card({ id, onClick, selected, disabled, hero }: CardProp
           + maybeClass(disabled, 'disabled')
           + maybeClass(hero, 'hero')
         }
+        alt={data ? data.name : 'placeholder'}
         src={data ? ipfs.getHttpMirror(data.image) : placeholder}
       />
       {data && (

@@ -45,7 +45,8 @@ export default function Matchmaking() {
     if (state.key === 'found') {
       history.push(`/game/${state.other}`);
     }
-  }, [state.key]);
+  // eslint-disable-next-line
+  }, [state.key, history]);
 
   return (
     <div className="matchmaking">

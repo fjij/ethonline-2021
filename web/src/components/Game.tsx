@@ -40,27 +40,31 @@ function useDelayedHand(source: board.CardState[] | undefined, destroyDelay: num
 
   useEffect(() => {
     if (source) {
-      console.log('effect');
       const newHand = [ ...hand];
       const myHashes = hand.map(item => item.card.hash);
       const hashes = source.map(item => item.hash);
+      let modified = false;
       myHashes.forEach((myHash, idx) => {
         if (hashes.indexOf(myHash) === -1) {
+          modified = true;
           newHand[idx].destroyed = true;
           setTimeout(() => setHand(hand => hand.filter(item => item.card.hash !== myHash)), destroyDelay);
         }
       });
       hashes.forEach((hash, idx) => {
         if (myHashes.indexOf(hash) === -1) {
+          modified = true;
           newHand.push({ 
             card: source[idx] as board.FaceUpCardState, 
             destroyed: false,
           });
         }
       });
-      setHand(newHand);
+      if (modified) {
+        setHand(newHand);
+      }
     }
-  }, [source]);
+  }, [source, destroyDelay, hand]);
 
   return hand;
 }
@@ -77,11 +81,6 @@ export default function Game() {
 
   const [logs, setLogs] = useState<string[]>([]);
   const [otherLogs, setOtherLogs] = useState<string[]>([]);
-
-  const deck = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
-  ];
 
   function play() {
     if (selectedCard) {

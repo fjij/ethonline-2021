@@ -174,8 +174,9 @@ export function computeInteraction(
           emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
           break;
         }
-        keyword.keywords
-          .forEach(kw => allKeywords.push({ keyword: kw, isOther: !isOther }));
+        allKeywords = allKeywords.concat(
+          keyword.keywords.map(kw => ({ keyword: kw, isOther: !isOther }))
+        );
         emittedKeywords.push({ isOther, result: keyword });
         break;
       }

@@ -1,20 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CollectionDisplayCard from "./CollectionDisplayCard";
-import { ipfs, card, contract } from "../eth";
+import { contract } from "../eth";
 import { StoreBanner } from './Store';
 import "../styles/CollectionDisplayCard.css";
 import banner0 from "../assets/oroeginsBanner.png";
-
-interface CardProps {
-  id: number;
-  name: string;
-  image: string;
-  attack: number;
-  points: number;
-  description: string;
-}
-
-const cards: CardProps[] = [];
 
 export default function MyCollection() {
   const [count, setCount] = useState(0);
@@ -58,28 +47,5 @@ export default function MyCollection() {
         </section>
       </div>
     </>
-  );
-}
-
-function Collection() {
-  return (
-    <section className="collection">
-      {cards.map((card) => {
-        return <CardDisplay {...card}></CardDisplay>;
-      })}
-    </section>
-  );
-}
-
-function CardDisplay(props: CardProps) {
-  const { name, image, description } = props;
-  return (
-    <article className="collection-card">
-      <section className="center">
-        <img src={image}></img>
-        <h3>{name}</h3>
-      </section>
-      <p className="collection-card-desc">{description}</p>
-    </article>
   );
 }
