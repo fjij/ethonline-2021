@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+
 .collection {
   display: grid;
   grid-template-columns: 550px 550px 550px;
@@ -26,6 +28,10 @@
   text-align: left;
   width: 100%;
 }
+
+/*.collection-card-info {
+  font-family: "Open Sans", sans-serif;
+}*/
 
 .collection-card-rarity {
   text-transform: capitalize;
