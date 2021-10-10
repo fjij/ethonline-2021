@@ -97,7 +97,7 @@ interface OwnedKeyword {
   keyword: Keyword;
 }
 
-interface InteractionResult {
+export interface InteractionResult {
   keywords: OwnedKeywordResult[],
   won: boolean,
   otherWon: boolean,
