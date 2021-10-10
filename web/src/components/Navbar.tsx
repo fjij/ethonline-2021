@@ -13,6 +13,7 @@ export default function Navbar() {
           <h1>SUPER CARD GAME</h1>
         </Link>
       </div>
+      <div className="line"></div>
     </>
   );
 }

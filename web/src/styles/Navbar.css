@@ -5,8 +5,19 @@
 
 .navbar-link {
   margin: 2rem;
-  padding: 1rem 1.5rem 0.5rem 1.5rem;
+  padding: 0.5rem 1.5rem 0.5rem 1.5rem;
   color: black;
   border-style: solid;
   background-color: white;
+  border-width: 4px;
+  transition: transform 0.1s;
+}
+
+.navbar-link:hover {
+  transform: scale(1.1);
+}
+
+.line {
+  margin-top: 5px;
+  border-top: 4px solid black;
 }

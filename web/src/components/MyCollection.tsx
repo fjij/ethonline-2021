@@ -18,8 +18,6 @@ export default function MyCollection() {
   return (
     <>
       <div className="heading">
-        <h1>Card Collection</h1>
-
         <section className="collection">
           {Array.from(Array(43).keys()).map((id) => (
             <div className="collection-slot">

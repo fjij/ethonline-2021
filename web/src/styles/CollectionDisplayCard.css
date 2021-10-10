@@ -31,6 +31,7 @@
   margin-top: 10px;
   border-top: 4px solid black;
 }
+
 @media only screen and (max-width: 1800px) {
   .collection {
     grid-template-columns: 550px 550px;

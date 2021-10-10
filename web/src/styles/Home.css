@@ -3,8 +3,7 @@
 }
 
 .home {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-top: 8rem;
 }
 
 .center {
@@ -15,7 +14,7 @@
   padding: 2rem;
   background-color: white;
   border-radius: 20px;
-  transition: transform .2s;
+  transition: transform 0.2s;
 }
 
 .home-card:hover {
@@ -37,12 +36,6 @@
   grid-gap: 3rem;
 }
 
-p {
-  text-decoration: none;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
 .links a:visited {
   color: black;
 }
@@ -51,6 +44,6 @@ a,
 a:link,
 a:visited,
 a:hover,
-a:active{
+a:active {
   text-decoration: none;
 }
