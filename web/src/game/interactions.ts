@@ -97,7 +97,7 @@ interface OwnedKeyword {
   keyword: Keyword;
 }
 
-interface InteractionResult {
+export interface InteractionResult {
   keywords: OwnedKeywordResult[],
   won: boolean,
   otherWon: boolean,
@@ -220,7 +220,7 @@ export function computeInteraction(
   return {
     keywords: emittedKeywords,
     won: stats.power > otherStats.power,
-    otherWon: stats.power > otherStats.power,
+    otherWon: otherStats.power > stats.power,
   };
 }
 
