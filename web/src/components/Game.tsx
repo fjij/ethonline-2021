@@ -47,7 +47,7 @@ export default function Game() {
   }
 
   async function onUpdate() {
-    await sleep(500);
+    await sleep(1000);
   }
 
   return (
