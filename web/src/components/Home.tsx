@@ -27,7 +27,7 @@ const HomeCard = (props: HomeCardProps) => {
     <Link className="text" to={link}>
       <article className="home-card">
         <section className="center">
-          <img src={img} />
+          <img src={img} alt={text} />
         </section>
         <br />
         <span className="blocky">{text}</span>

@@ -22,7 +22,10 @@ export default function Card({ id, zoom, onClick }: CardProps) {
   return (
     <div className={"collection-card" + (quantity>0?' owned':'') }>
       <div className="collection-card-picture">
-        <img src={data ? ipfs.getHttpMirror(data.image) : placeholder} />
+        <img 
+          alt={data ? data.name : 'placeholder'}
+          src={data ? ipfs.getHttpMirror(data.image) : placeholder} 
+        />
       </div>
       <div className="collection-card-text">
         {data && (

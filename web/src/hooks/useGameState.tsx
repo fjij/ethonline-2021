@@ -65,7 +65,6 @@ export default function useGameState(other: string, onUpdate: () => Promise<void
   }
 
   useEffect(() => {
-    console.log(boardState);
     (async () => {
       if (boardState.nextPhase === 'play') {
         await onUpdate();
@@ -96,7 +95,13 @@ export default function useGameState(other: string, onUpdate: () => Promise<void
         setBoardState(state => board.drawPhase(state, randInt.current!, isFirst));
       }
     })();
-  }, [boardState.nextPhase, boardState.combatResult?.keywords, data, otherData]);
+  }, [boardState.nextPhase, 
+      boardState.playerState, 
+      boardState.otherPlayerState, 
+      boardState.combatResult?.keywords, 
+      isFirst,
+      onUpdate,
+      data, otherData]);
 
   async function onCardMoves(move: CardMove, otherMove: CardMove) {
     setSeed(getSeed(move, otherMove));

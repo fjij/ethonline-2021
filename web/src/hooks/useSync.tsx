@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { message, channel, sync } from '../comms';
 
@@ -13,7 +13,7 @@ export default function useSync(
     return message.listen((msg) => {
       setSyncState(state => sync.handleMessage(state, msg));
     }, channel);
-  }, []);
+  }, [channel]);
 
   useEffect(() => {
     if (syncState.todo.outgoing.length > 0) {
@@ -22,7 +22,7 @@ export default function useSync(
       });
       setSyncState(state => ({ ...state, todo: { ...state.todo, outgoing: [] }}));
     }
-  }, [syncState.todo.outgoing]);
+  }, [syncState.todo.outgoing, channel]);
 
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function useSync(
       });
       setSyncState(state => ({ ...state, todo: { ...state.todo, turns: [] } }));
     }
-  }, [syncState.todo.turns]);
+  }, [syncState.todo.turns, onMoves]);
 
   function playMove(move: any): void {
     console.log('playMove');

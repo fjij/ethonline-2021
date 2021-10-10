@@ -1,5 +1,4 @@
 import * as message from './message';
-import * as channel from './channel';
 import * as crypto from './crypto';
 
 const stringify = require('json-stringify-deterministic');

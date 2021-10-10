@@ -29,7 +29,7 @@ export const StoreBanner = (props: StoreBannerProps) => {
   return (
     <Link to={to}>
       <article className="set-placeholder">
-        <img className={name} src={img}></img>
+        <img className={name} src={img} alt={name}></img>
       </article>
     </Link>
   );

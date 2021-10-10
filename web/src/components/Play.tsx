@@ -6,7 +6,7 @@ import playBackground from "../assets/playbackgroundfull.png";
 export default function Play() {
   return (
     <>
-      <img className="play-background" src={playBackground}></img>
+      <img className="play-background" src={playBackground} alt="background" />
       <Matchmaking />
     </>
   );
