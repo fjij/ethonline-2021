@@ -179,7 +179,7 @@ export default function Game() {
                 .map(card => <Card
                   onClick={() => setSelectedCard(card)}
                   id={card.data.id} 
-                  key={card.data.id} 
+                  key={card.hash}
                   disabled={!canMove}
                   selected={selectedCard?.hash === card.hash}
                 />)
@@ -190,7 +190,7 @@ export default function Game() {
                 .map(card => <Card
                   onClick={() => setSelectedCard(card)}
                   id={card.data.id} 
-                  key={card.data.id} 
+                  key={card.hash}
                   disabled={!canMove}
                   selected={selectedCard?.hash === card.hash}
                 />)
