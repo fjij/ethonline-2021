@@ -31,7 +31,6 @@ export default function Game() {
 
   const { other }: any = useParams();
 
-
   const [text, setText] = useState('');
   const [selectedCard, setSelectedCard] = useState<board.FaceUpCardState | undefined>();
   const [boardState, setupDeck, playCard, canMove] = useGameState(other, onUpdate);

@@ -211,6 +211,8 @@ export function bonusPhase(
     } else {
       newState = drawFor(state, true, randInt, true, 1);
     }
+  } else {
+    newState = state;
   }
 
   newState = {
