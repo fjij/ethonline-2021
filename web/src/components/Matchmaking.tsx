@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, Link, Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import useInterval from '../hooks/useInterval';
 import { message, channel, matchmaking } from '../comms';
 
@@ -12,8 +12,6 @@ export default function Matchmaking() {
   const [negotiationCounter, setNegotiationCounter] = useState(0);
 
   const [backupLink, setBackupLink] = useState<string>();
-
-  const history = useHistory();
 
   useEffect(() => {
     if (lfg) {
@@ -45,11 +43,10 @@ export default function Matchmaking() {
 
   useEffect(() => {
     if (state.key === 'found') {
-      history.push(`/game/${state.other}`);
       setBackupLink(`/game/${state.other}`);
     }
   // eslint-disable-next-line
-  }, [state.key, history]);
+  }, [state.key]);
 
   return (
     <div className="matchmaking">
