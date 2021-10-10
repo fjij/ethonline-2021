@@ -216,7 +216,10 @@ export default function Game() {
         }
       } else {
         setText('you\'re NOT winner!');
-        if (isHero) {
+      }
+
+      if (result.otherWon) {
+        if (otherIsHero) {
           setBoardState(state => ({ ...state, otherPlayerState: 
             { ...state.otherPlayerState!, points: state.otherPlayerState!.points + 1}
           }));
