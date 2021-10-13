@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { wallet } from "../eth";
 import "../styles/Instructions.css";
+import deployment from '../contracts/deployment.json';
 
 interface ConnectWalletProps {
   onConnected: () => void;
@@ -44,12 +45,19 @@ const Instructions = () => {
         </h2>
         <h2>
           2. Connect to{" "}
-          <a href="https://medium.com/stakingbits/setting-up-metamask-for-polygon-matic-network-838058f6d844">
-            Polygon Network.
+          <a href="https://mumbai.polygonscan.com/">
+            Mumbai Polygon Testnet.
           </a>
         </h2>
+        <div>
+          <code>chain id: {deployment.chainId}</code>
+          <br />
+          <code>rpc: {deployment.url}</code>
+        </div>
         <h2>3. Click the Connect Wallet button.</h2>
         <h2>4. Play Super Card Game!</h2>
+        <p>Warning: If you continue without metamask connected to the correct
+          network, the rest of the site might not work as intended.</p>
       </div>
     </>
   );
