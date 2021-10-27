@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { wallet } from "../eth";
-import "../styles/Instructions.css";
 
 interface ConnectWalletProps {
   onConnected: () => void;
