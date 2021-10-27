@@ -1,17 +1,17 @@
-import { wallet } from '../eth';
+import { wallet } from "../eth";
 
-const APP = 'super-card-game';
+const APP = "super-card-game";
 const VERSION = 1;
-const ENCODING = 'json';
+const ENCODING = "json";
 
 type MatchmakingChannelOpts = {
-  key: 'matchmaking',
-}
+  key: "matchmaking";
+};
 
 type GameChannelOpts = {
-  key: 'game',
-  id: string,
-}
+  key: "game";
+  id: string;
+};
 
 type ChannelOpts = MatchmakingChannelOpts | GameChannelOpts;
 
@@ -19,7 +19,7 @@ export class Channel {
   contentTopic: string;
 
   constructor(opts: ChannelOpts) {
-    const name = 'id' in opts ? `${opts.key}-${opts.id}` : opts.key;
+    const name = "id" in opts ? `${opts.key}-${opts.id}` : opts.key;
     this.contentTopic = `${APP}/${VERSION}/${name}/${ENCODING}`;
   }
 
@@ -28,10 +28,10 @@ export class Channel {
   }
 }
 
-export const matchmaking = new Channel({ key: 'matchmaking' });
+export const matchmaking = new Channel({ key: "matchmaking" });
 
 export function CreateGameChannel(other: string) {
   const addresses = [wallet.getAddress(), other];
   addresses.sort();
-  return new Channel({ key: 'game', id: addresses.join('-') });
+  return new Channel({ key: "game", id: addresses.join("-") });
 }

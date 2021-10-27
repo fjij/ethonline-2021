@@ -1,9 +1,9 @@
-import arrayShuffle from 'array-shuffle';
-import { crypto } from '../comms';
-import { interactions } from '../game';
-import { card } from '../eth';
+import arrayShuffle from "array-shuffle";
+import { crypto } from "../comms";
+import { interactions } from "../game";
+import { card } from "../eth";
 
-const stringify = require('json-stringify-deterministic');
+const stringify = require("json-stringify-deterministic");
 
 export interface FaceUpCardState {
   data: {
@@ -32,7 +32,7 @@ export interface PlayerState {
   winner: boolean;
 }
 
-export type Phase = 'play' | 'combat' | 'resolution' | 'bonus' | 'draw';
+export type Phase = "play" | "combat" | "resolution" | "bonus" | "draw";
 
 export interface BoardState {
   playerState?: PlayerState;
@@ -43,16 +43,16 @@ export interface BoardState {
 }
 
 export function createPlayerState(deck: CardState[]): PlayerState {
-  const hashes = deck.map(card => card.hash);
+  const hashes = deck.map((card) => card.hash);
   const duplicates = hashes.filter((hash, idx) => hashes.indexOf(hash) !== idx);
   if (duplicates.length > 0) {
-    throw new Error('duplicate card state in deck');
+    throw new Error("duplicate card state in deck");
   }
   return {
     points: 0,
     heroes: [],
-    hand: [], 
-    deck, 
+    hand: [],
+    deck,
     empower: null,
     active: null,
     winner: false,
@@ -60,21 +60,21 @@ export function createPlayerState(deck: CardState[]): PlayerState {
 }
 
 function playCard(state: PlayerState, card: FaceUpCardState): PlayerState {
-  const handIndex = state.hand.map(c => c.hash).indexOf(card.hash);
-  const heroIndex = state.heroes.map(c => c.hash).indexOf(card.hash);
+  const handIndex = state.hand.map((c) => c.hash).indexOf(card.hash);
+  const heroIndex = state.heroes.map((c) => c.hash).indexOf(card.hash);
   if (handIndex === -1 && heroIndex === -1) {
-    throw new Error('played invalid card state');
+    throw new Error("played invalid card state");
   }
   if (handIndex >= 0) {
-    const newHand = [ ...state.hand ];
+    const newHand = [...state.hand];
     newHand.splice(handIndex, 1);
     return { ...state, hand: newHand, active: { card, isHero: false } };
   } else if (heroIndex >= 0) {
-    const newHeroes = [ ...state.heroes ];
+    const newHeroes = [...state.heroes];
     newHeroes.splice(heroIndex, 1);
     return { ...state, heroes: newHeroes, active: { card, isHero: true } };
   } else {
-    throw new Error('should not be here');
+    throw new Error("should not be here");
   }
 }
 
@@ -84,17 +84,17 @@ export function playPhase(
   otherCard: FaceUpCardState
 ): BoardState {
   if (!state.playerState || !state.otherPlayerState) {
-    throw new Error('player states not ready');
+    throw new Error("player states not ready");
   }
-  if (state.nextPhase !== 'play') {
-    throw new Error('incorrect phase');
+  if (state.nextPhase !== "play") {
+    throw new Error("incorrect phase");
   }
   return {
     ...state,
     playerState: playCard(state.playerState, card),
     otherPlayerState: playCard(state.otherPlayerState, otherCard),
-    nextPhase: 'combat',
-  }
+    nextPhase: "combat",
+  };
 }
 
 export function combatPhase(
@@ -105,86 +105,98 @@ export function combatPhase(
   isFirst: boolean
 ): BoardState {
   if (!state.playerState || !state.otherPlayerState) {
-    throw new Error('player states not ready');
+    throw new Error("player states not ready");
   }
-  if (state.nextPhase !== 'combat') {
-    throw new Error('incorrect phase');
+  if (state.nextPhase !== "combat") {
+    throw new Error("incorrect phase");
   }
   const empower = state.playerState.empower;
   const otherEmpower = state.otherPlayerState.empower;
-  const keywords = empower 
-    ? [ ...cardData.keywords, ...empower.keywords] 
+  const keywords = empower
+    ? [...cardData.keywords, ...empower.keywords]
     : cardData.keywords;
-  const otherKeywords = otherEmpower 
-    ? [ ...otherCardData.keywords, ...otherEmpower.keywords] 
+  const otherKeywords = otherEmpower
+    ? [...otherCardData.keywords, ...otherEmpower.keywords]
     : otherCardData.keywords;
   const combatResult = interactions.computeInteraction(
-    cardData.power, keywords,
-    otherCardData.power, otherKeywords,
-    isFirst, randInt);
+    cardData.power,
+    keywords,
+    otherCardData.power,
+    otherKeywords,
+    isFirst,
+    randInt
+  );
 
   return {
     ...state,
     playerState: { ...state.playerState, empower: null },
     otherPlayerState: { ...state.otherPlayerState, empower: null },
-    nextPhase: 'resolution',
+    nextPhase: "resolution",
     combatResult,
-  }
+  };
 }
 
 export function resolveSingle(
-  state: BoardState, 
-  randInt: (range: number) => number,
+  state: BoardState,
+  randInt: (range: number) => number
 ): BoardState {
-  if (state.nextPhase !== 'resolution') {
-    throw new Error('incorrect phase');
+  if (state.nextPhase !== "resolution") {
+    throw new Error("incorrect phase");
   }
-  const newKeywords = [ ...state.combatResult!.keywords];
+  const newKeywords = [...state.combatResult!.keywords];
   const firstEffect = newKeywords.shift();
-  const newState = { 
-    ...state, 
-    combatResult: { ...state.combatResult!, keywords: newKeywords }
+  const newState = {
+    ...state,
+    combatResult: { ...state.combatResult!, keywords: newKeywords },
   };
   if (firstEffect) {
     const keyword = firstEffect.result;
-    if (keyword.name === 'draw') {
-      return drawFor(newState, firstEffect.isOther, randInt, false, keyword.value);
-    } else if (keyword.name === 'discard') {
+    if (keyword.name === "draw") {
+      return drawFor(
+        newState,
+        firstEffect.isOther,
+        randInt,
+        false,
+        keyword.value
+      );
+    } else if (keyword.name === "discard") {
       return discardFor(newState, firstEffect.isOther, randInt, keyword.value);
-    } else if (keyword.name === 'empower') {
+    } else if (keyword.name === "empower") {
       return empowerFor(newState, firstEffect.isOther, keyword);
     } else {
       return newState;
     }
-  }  else {
-    return { ...newState, nextPhase: 'bonus' };
+  } else {
+    return { ...newState, nextPhase: "bonus" };
   }
 }
 
 export function setupPhase(
   state: BoardState,
   randInt: (range: number) => number,
-  isFirst: boolean,
+  isFirst: boolean
 ): BoardState {
   if (isFirst) {
     return {
       ...state,
       playerState: draw(state.playerState!, randInt, false, 4),
       otherPlayerState: draw(state.otherPlayerState!, randInt, false, 4),
-    }
+    };
   } else {
     return {
       ...state,
       otherPlayerState: draw(state.otherPlayerState!, randInt, false, 4),
       playerState: draw(state.playerState!, randInt, false, 4),
-    }
+    };
   }
 }
 
 function hasLost(state: PlayerState): boolean {
-  return state.hand.length === 0 
-    && state.heroes.length === 0 
-    && state.deck.length === 0;
+  return (
+    state.hand.length === 0 &&
+    state.heroes.length === 0 &&
+    state.deck.length === 0
+  );
 }
 
 function hasWon(state: PlayerState): boolean {
@@ -193,10 +205,10 @@ function hasWon(state: PlayerState): boolean {
 
 export function bonusPhase(
   state: BoardState,
-  randInt: (range: number) => number,
+  randInt: (range: number) => number
 ): BoardState {
-  if (state.nextPhase !== 'bonus') {
-    throw new Error('incorrect phase');
+  if (state.nextPhase !== "bonus") {
+    throw new Error("incorrect phase");
   }
   let newState: BoardState;
   if (state.combatResult!.won) {
@@ -218,26 +230,30 @@ export function bonusPhase(
   newState = {
     ...newState!,
     combatResult: null,
-    nextPhase: 'draw'
-  }
+    nextPhase: "draw",
+  };
 
   if (hasWon(newState.playerState!)) {
-    return { ...newState, 
+    return {
+      ...newState,
       playerState: { ...newState.playerState!, winner: true },
       gameOver: true,
     };
   } else if (hasWon(newState.otherPlayerState!)) {
-    return { ...newState, 
+    return {
+      ...newState,
       otherPlayerState: { ...newState.otherPlayerState!, winner: true },
       gameOver: true,
     };
   } else if (hasLost(newState.playerState!)) {
-    return { ...newState, 
+    return {
+      ...newState,
       otherPlayerState: { ...newState.otherPlayerState!, winner: true },
       gameOver: true,
     };
   } else if (hasLost(newState.otherPlayerState!)) {
-    return { ...newState, 
+    return {
+      ...newState,
       playerState: { ...newState.playerState!, winner: true },
       gameOver: true,
     };
@@ -249,10 +265,10 @@ export function bonusPhase(
 export function drawPhase(
   state: BoardState,
   randInt: (range: number) => number,
-  isFirst: boolean,
+  isFirst: boolean
 ): BoardState {
-  if (state.nextPhase !== 'draw') {
-    throw new Error('incorrect phase');
+  if (state.nextPhase !== "draw") {
+    throw new Error("incorrect phase");
   }
   const shouldDraw = state.playerState!.hand.length < 4;
   const shouldOtherDraw = state.otherPlayerState!.hand.length < 4;
@@ -270,44 +286,45 @@ export function drawPhase(
   }
   return {
     ...newState,
-    nextPhase: 'play'
+    nextPhase: "play",
   };
 }
 
 function empowerFor(
   state: BoardState,
   isOther: boolean,
-  empower: interactions.Empower,
+  empower: interactions.Empower
 ): BoardState {
   if (isOther) {
     return {
-      ...state, otherPlayerState: { ...state.otherPlayerState!, empower }
-    }
+      ...state,
+      otherPlayerState: { ...state.otherPlayerState!, empower },
+    };
   } else {
     return {
-      ...state, playerState: { ...state.playerState!, empower }
-    }
+      ...state,
+      playerState: { ...state.playerState!, empower },
+    };
   }
 }
 
-function addPointFor(
-  state: BoardState,
-  isOther: boolean,
-): BoardState {
+function addPointFor(state: BoardState, isOther: boolean): BoardState {
   if (isOther) {
     return {
-      ...state, otherPlayerState: { 
-        ...state.otherPlayerState!, 
-        points: state.otherPlayerState!.points + 1
-      }
-    }
+      ...state,
+      otherPlayerState: {
+        ...state.otherPlayerState!,
+        points: state.otherPlayerState!.points + 1,
+      },
+    };
   } else {
     return {
-      ...state, playerState: { 
-        ...state.playerState!, 
-        points: state.playerState!.points + 1
-      }
-    }
+      ...state,
+      playerState: {
+        ...state.playerState!,
+        points: state.playerState!.points + 1,
+      },
+    };
   }
 }
 
@@ -316,17 +333,17 @@ function drawFor(
   isOther: boolean,
   randInt: (range: number) => number,
   isHero: boolean = false,
-  count: number = 1,
+  count: number = 1
 ): BoardState {
   if (isOther) {
     return {
       ...state,
-      otherPlayerState: draw(state.otherPlayerState!, randInt, isHero, count)
+      otherPlayerState: draw(state.otherPlayerState!, randInt, isHero, count),
     };
   } else {
     return {
       ...state,
-      playerState: draw(state.playerState!, randInt, isHero, count)
+      playerState: draw(state.playerState!, randInt, isHero, count),
     };
   }
 }
@@ -335,7 +352,7 @@ function draw(
   state: PlayerState,
   randInt: (range: number) => number,
   isHero: boolean = false,
-  count: number = 1,
+  count: number = 1
 ): PlayerState {
   if (count <= 0) {
     return state;
@@ -344,22 +361,32 @@ function draw(
     return state;
   }
   const index = randInt(state.deck.length);
-  const newDeck = [ ...state.deck ];
+  const newDeck = [...state.deck];
   newDeck.splice(index, 1);
   if (isHero) {
-    console.log('draw hero');
-    return draw({
-      ...state,
-      deck: newDeck,
-      heroes: [ ...state.heroes, state.deck[index]]
-    }, randInt, isHero, count - 1);
+    console.log("draw hero");
+    return draw(
+      {
+        ...state,
+        deck: newDeck,
+        heroes: [...state.heroes, state.deck[index]],
+      },
+      randInt,
+      isHero,
+      count - 1
+    );
   } else {
-    console.log('draw');
-    return draw({
-      ...state,
-      deck: newDeck,
-      hand: [ ...state.hand, state.deck[index]]
-    }, randInt, isHero, count - 1);
+    console.log("draw");
+    return draw(
+      {
+        ...state,
+        deck: newDeck,
+        hand: [...state.hand, state.deck[index]],
+      },
+      randInt,
+      isHero,
+      count - 1
+    );
   }
 }
 
@@ -367,17 +394,17 @@ function discardFor(
   state: BoardState,
   isOther: boolean,
   randInt: (range: number) => number,
-  count: number = 1,
+  count: number = 1
 ): BoardState {
   if (isOther) {
     return {
       ...state,
-      otherPlayerState: discard(state.otherPlayerState!, randInt, count)
+      otherPlayerState: discard(state.otherPlayerState!, randInt, count),
     };
   } else {
     return {
       ...state,
-      playerState: discard(state.playerState!, randInt, count)
+      playerState: discard(state.playerState!, randInt, count),
     };
   }
 }
@@ -385,7 +412,7 @@ function discardFor(
 function discard(
   state: PlayerState,
   randInt: (range: number) => number,
-  count: number = 1,
+  count: number = 1
 ): PlayerState {
   if (count <= 0) {
     return state;
@@ -394,16 +421,20 @@ function discard(
     return state;
   }
   const index = randInt(state.hand.length);
-  const newHand = [ ...state.hand ];
+  const newHand = [...state.hand];
   newHand.splice(index, 1);
-  return discard({
-    ...state,
-    hand: newHand,
-  }, randInt, count - 1);
+  return discard(
+    {
+      ...state,
+      hand: newHand,
+    },
+    randInt,
+    count - 1
+  );
 }
 
 export function createDeck(ids: number[]): FaceUpCardState[] {
-  return arrayShuffle(ids).map(id => {
+  return arrayShuffle(ids).map((id) => {
     const data = { id, salt: crypto.generateSalt() };
     const hash = crypto.hash(stringify(data));
     return { data, hash };

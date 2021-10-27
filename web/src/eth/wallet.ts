@@ -1,6 +1,6 @@
-import { ethers } from 'ethers';
-import { message } from '../comms';
-import * as contract from './contract';
+import { ethers } from "ethers";
+import { message } from "../comms";
+import * as contract from "./contract";
 
 let signer: ethers.providers.JsonRpcSigner;
 let address: string;
@@ -12,7 +12,7 @@ export function hasEthereum(): boolean {
 }
 
 export function isConnected(): boolean {
-  return (!!signer) && (!!address) && connected;
+  return !!signer && !!address && connected;
 }
 
 export function getSigner(): ethers.providers.JsonRpcSigner {
@@ -21,7 +21,7 @@ export function getSigner(): ethers.providers.JsonRpcSigner {
 
 export function getAddress(): string {
   if (!signer) {
-    throw new Error('no signer connected');
+    throw new Error("no signer connected");
   }
   return address;
 }
@@ -31,7 +31,7 @@ export async function connectWallet() {
   const ethereum = window.ethereum;
   if (ethereum) {
     try {
-      await ethereum.request({ method: 'eth_requestAccounts' });
+      await ethereum.request({ method: "eth_requestAccounts" });
       const provider = new ethers.providers.Web3Provider(ethereum);
 
       signer = provider.getSigner();
@@ -42,8 +42,8 @@ export async function connectWallet() {
       await message.init(signer);
 
       connected = true;
-    } catch(e) {
-      console.error('Wallet not connected.');
+    } catch (e) {
+      console.error("Wallet not connected.");
       console.error(e);
     }
   }

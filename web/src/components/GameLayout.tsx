@@ -1,10 +1,8 @@
 import React from "react";
 import "../styles/GameLayout.css";
-import { board } from '../game';
+import { board } from "../game";
 
-interface GameLayoutProps {
-
-}
+interface GameLayoutProps {}
 
 export default function GameLayout({}) {
   return (

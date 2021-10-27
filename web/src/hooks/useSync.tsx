@@ -1,46 +1,51 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import { message, channel, sync } from '../comms';
+import { message, channel, sync } from "../comms";
 
 export default function useSync(
   onMoves: (move: any, otherMove: any) => void,
   channel: channel.Channel,
-  other: string,
+  other: string
 ): (move: any) => void {
   const [syncState, setSyncState] = useState(sync.baseState(other));
 
   useEffect(() => {
     return message.listen((msg) => {
-      setSyncState(state => sync.handleMessage(state, msg));
+      setSyncState((state) => sync.handleMessage(state, msg));
     }, channel);
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     if (syncState.todo.outgoing.length > 0) {
-      syncState.todo.outgoing.forEach(data => {
+      syncState.todo.outgoing.forEach((data) => {
         message.send(data, channel);
       });
-      setSyncState(state => ({ ...state, todo: { ...state.todo, outgoing: [] }}));
+      setSyncState((state) => ({
+        ...state,
+        todo: { ...state.todo, outgoing: [] },
+      }));
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [syncState.todo.outgoing]);
-
 
   useEffect(() => {
     if (syncState.todo.turns.length > 0) {
-      syncState.todo.turns.forEach(turn => {
+      syncState.todo.turns.forEach((turn) => {
         onMoves(turn.move, turn.otherMove);
       });
-      setSyncState(state => ({ ...state, todo: { ...state.todo, turns: [] } }));
+      setSyncState((state) => ({
+        ...state,
+        todo: { ...state.todo, turns: [] },
+      }));
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [syncState.todo.turns]);
 
   function playMove(move: any): void {
-    console.log('playMove');
-    setSyncState(state => sync.playMove(state, move));
+    console.log("playMove");
+    setSyncState((state) => sync.playMove(state, move));
   }
-  
+
   return playMove;
 }

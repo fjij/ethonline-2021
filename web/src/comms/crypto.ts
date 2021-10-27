@@ -1,8 +1,8 @@
-import elliptic from 'elliptic';
-import keccak256 from 'keccak256';
+import elliptic from "elliptic";
+import keccak256 from "keccak256";
 
 const EC = elliptic.ec;
-const ec = new EC('ed25519');
+const ec = new EC("ed25519");
 
 const key = ec.genKeyPair();
 
@@ -13,7 +13,7 @@ export function generateSalt() {
 }
 
 export function hash(str: string): string {
-  return keccak256(str).toString('hex');
+  return keccak256(str).toString("hex");
 }
 
 export function b64encode(arr: number[]): string {
@@ -21,11 +21,13 @@ export function b64encode(arr: number[]): string {
 }
 
 export function b64decode(str: string): number[] {
-  return atob(str).split('').map(c => c.charCodeAt(0));
+  return atob(str)
+    .split("")
+    .map((c) => c.charCodeAt(0));
 }
 
 export function getPublicKey(): string {
-  return key.getPublic().encode('hex', true);
+  return key.getPublic().encode("hex", true);
 }
 
 export function randomBytes(len: number): number[] {
@@ -41,17 +43,21 @@ export interface SignedMessage {
 }
 
 export function sign(message: string): SignedMessage {
-  const hash = keccak256(message).toString('hex');
+  const hash = keccak256(message).toString("hex");
   const derHash = key.sign(hash).toDER();
   return {
     signature: b64encode(derHash),
-    publicKey: key.getPublic().encode('hex', true),
+    publicKey: key.getPublic().encode("hex", true),
     message,
   };
 }
 
-export function verify({ signature, publicKey, message }: SignedMessage): boolean {
-  const hash = keccak256(message).toString('hex');
-  const key = ec.keyFromPublic(publicKey, 'hex');
+export function verify({
+  signature,
+  publicKey,
+  message,
+}: SignedMessage): boolean {
+  const hash = keccak256(message).toString("hex");
+  const key = ec.keyFromPublic(publicKey, "hex");
   return key.verify(hash, b64decode(signature));
 }

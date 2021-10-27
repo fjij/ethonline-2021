@@ -1,51 +1,51 @@
-import { wallet } from '../eth';
-import * as message from './message';
-import * as channel from './channel';
+import { wallet } from "../eth";
+import * as message from "./message";
+import * as channel from "./channel";
 
 interface StateNone {
-  key: 'none'
-};
+  key: "none";
+}
 
 interface StateSearching {
-  key: 'searching';
-};
+  key: "searching";
+}
 
 interface StateNegotiating {
-  key: 'negotiating';
+  key: "negotiating";
   other: string;
-};
+}
 
 interface StateFound {
-  key: 'found';
+  key: "found";
   other: string;
-};
+}
 
-export type State = StateNone
-  | StateSearching
-  | StateNegotiating
-  | StateFound;
+export type State = StateNone | StateSearching | StateNegotiating | StateFound;
 
-export type StateKey = 'none' | 'searching' | 'negotiating' | 'found';
+export type StateKey = "none" | "searching" | "negotiating" | "found";
 
 export function sendMatchPosting() {
-  message.send({
-    key: 'posting'
-  }, channel.matchmaking);
+  message.send(
+    {
+      key: "posting",
+    },
+    channel.matchmaking
+  );
 }
 
 type MatchData = MatchPosting | MatchResponse | MatchAccept;
 
 interface MatchPosting {
-  key: 'posting';
+  key: "posting";
 }
 
 interface MatchResponse {
-  key: 'response';
+  key: "response";
   other: string;
 }
 
 interface MatchAccept {
-  key: 'accept';
+  key: "accept";
   other: string;
 }
 
@@ -53,35 +53,33 @@ export function handleMessage(state: State, msg: message.Message): State {
   const data: MatchData = msg.data;
 
   switch (data.key) {
-    case 'posting':
-    {
-      if (state.key === 'searching') {
+    case "posting": {
+      if (state.key === "searching") {
         requestMatch(msg);
-        return { key: 'negotiating', other: msg.getSender() };
+        return { key: "negotiating", other: msg.getSender() };
       }
       return state;
     }
-    case 'response':
-    {
-      if (state.key === 'searching'
-        || (state.key === 'negotiating' && state.other === msg.getSender())
+    case "response": {
+      if (
+        state.key === "searching" ||
+        (state.key === "negotiating" && state.other === msg.getSender())
       ) {
         if (data.other === wallet.getAddress()) {
           acceptResponse(msg);
-          return { key: 'found', other: msg.getSender() };
+          return { key: "found", other: msg.getSender() };
         }
       }
       return state;
     }
-    case 'accept':
-    {
-      if (state.key === 'negotiating') {
+    case "accept": {
+      if (state.key === "negotiating") {
         if (msg.getSender() === state.other) {
           if (data.other === wallet.getAddress()) {
-            return { key: 'found', other: msg.getSender() };
+            return { key: "found", other: msg.getSender() };
           } else {
             // They have accepted someone else
-            return { key: 'searching' };
+            return { key: "searching" };
           }
         }
       }
@@ -90,19 +88,18 @@ export function handleMessage(state: State, msg: message.Message): State {
   }
 }
 
-
 function requestMatch(msg: message.Message) {
   const data: MatchData = {
     other: msg.getSender(),
-    key: 'response'
+    key: "response",
   };
   message.send(data, channel.matchmaking);
 }
 
 function acceptResponse(msg: message.Message) {
-  const data: MatchData= {
+  const data: MatchData = {
     other: msg.getSender(),
-    key: 'accept',
+    key: "accept",
   };
   message.send(data, channel.matchmaking);
 }
