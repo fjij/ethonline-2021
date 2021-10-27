@@ -22,3 +22,9 @@ jobs:
       run: |
         npm install
         npm run test
+    
+    - name: prettier web
+      working-directory: ./web
+      run: |
+        npm install
+        npx prettier --check .

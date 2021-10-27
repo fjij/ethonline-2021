@@ -20,11 +20,11 @@ export default function Card({ id, zoom, onClick }: CardProps) {
     card.getCardData(id).then((data) => setData(data));
   }, [id]);
   return (
-    <div className={"collection-card" + (quantity>0?' owned':'') }>
+    <div className={"collection-card" + (quantity > 0 ? " owned" : "")}>
       <div className="collection-card-picture">
-        <img 
-          alt={data ? data.name : 'placeholder'}
-          src={data ? ipfs.getHttpMirror(data.image) : placeholder} 
+        <img
+          alt={data ? data.name : "placeholder"}
+          src={data ? ipfs.getHttpMirror(data.image) : placeholder}
         />
       </div>
       <div className="collection-card-text">
@@ -45,7 +45,7 @@ export default function Card({ id, zoom, onClick }: CardProps) {
               </h4>
             </div>
             <div className="collection-card-quantity">
-              { quantity > 1 && <h1>{quantity}</h1>}
+              {quantity > 1 && <h1>{quantity}</h1>}
             </div>
           </div>
         )}

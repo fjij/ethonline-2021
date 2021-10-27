@@ -21,7 +21,11 @@ export default function Rules() {
       </div>
       <TableEffects />
 
-      <img className="explanation-img" src={explanation} alt="explanation"></img>
+      <img
+        className="explanation-img"
+        src={explanation}
+        alt="explanation"
+      ></img>
     </>
   );
 }

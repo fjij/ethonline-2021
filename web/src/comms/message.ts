@@ -1,14 +1,14 @@
-import { Waku, WakuMessage, getBootstrapNodes } from 'js-waku';
-import { ethers } from 'ethers';
+import { Waku, WakuMessage, getBootstrapNodes } from "js-waku";
+import { ethers } from "ethers";
 
-import { wallet } from '../eth';
-import * as channel from './channel';
-import * as crypto from './crypto';
+import { wallet } from "../eth";
+import * as channel from "./channel";
+import * as crypto from "./crypto";
 
-const stringify = require('json-stringify-deterministic');
+const stringify = require("json-stringify-deterministic");
 
 const NONCE_BYTES = 24;
-const MESSAGE_LIFETIME = 30*1000;
+const MESSAGE_LIFETIME = 30 * 1000;
 const REPEAT_DELAY = 500;
 
 let waku: Waku;
@@ -16,16 +16,22 @@ const sent: { [key: string]: boolean } = {};
 let walletSignature: string;
 
 export async function init(signer: ethers.providers.JsonRpcSigner) {
-  walletSignature = (await signer.signMessage(crypto.getPublicKey())).toString();
+  walletSignature = (
+    await signer.signMessage(crypto.getPublicKey())
+  ).toString();
   waku = await Waku.create({
-    bootstrap: getBootstrapNodes.bind({}, ['fleets', 'wakuv2.test', 'waku-websocket'])
+    bootstrap: getBootstrapNodes.bind({}, [
+      "fleets",
+      "wakuv2.test",
+      "waku-websocket",
+    ]),
   });
-  console.log('connected to waku');
+  console.log("connected to waku");
 }
 
 function assertWaku() {
   if (!waku) {
-    throw new Error('not connected to waku');
+    throw new Error("not connected to waku");
   }
 }
 
@@ -41,14 +47,19 @@ export class Message {
   sender: string;
   metadata: MessageMetadata;
 
-  constructor(data: any, sender: string, signature: string, metadata?: MessageMetadata) {
+  constructor(
+    data: any,
+    sender: string,
+    signature: string,
+    metadata?: MessageMetadata
+  ) {
     this.data = data;
     this.sender = sender;
     this.metadata = metadata ?? {
       timestamp: Date.now(),
       nonce: crypto.b64encode(crypto.randomBytes(NONCE_BYTES)),
       signature,
-      expiry: Date.now() + MESSAGE_LIFETIME
+      expiry: Date.now() + MESSAGE_LIFETIME,
     };
   }
 
@@ -73,7 +84,7 @@ export class Message {
   }
 
   getTimestamp() {
-    return this.metadata.timestamp
+    return this.metadata.timestamp;
   }
 
   isExpired() {
@@ -85,7 +96,9 @@ export class Message {
   }
 
   verify(publicKey: string) {
-    return this.sender === ethers.utils.verifyMessage(publicKey, this.getSignature());
+    return (
+      this.sender === ethers.utils.verifyMessage(publicKey, this.getSignature())
+    );
   }
 
   static fromString(str: string): Message {

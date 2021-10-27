@@ -12,27 +12,34 @@ interface CardProps {
   hero?: boolean;
 }
 
-export default function Card({ id, onClick, selected, disabled, hero }: CardProps) {
+export default function Card({
+  id,
+  onClick,
+  selected,
+  disabled,
+  hero,
+}: CardProps) {
   const [data, setData] = useState<card.CardData | undefined>();
   useEffect(() => {
     card.getCardData(id).then((data) => setData(data));
   }, [id]);
 
   function maybeClass(enabled: boolean | undefined, name: string) {
-    return enabled ? ` ${name}`: '';
+    return enabled ? ` ${name}` : "";
   }
   return (
     <div
-      className='card-container'
-      onClick={() => (onClick && !disabled) ? onClick() : null}
+      className="card-container"
+      onClick={() => (onClick && !disabled ? onClick() : null)}
     >
       <img
-        className={'card' 
-          + maybeClass(selected, 'selected') 
-          + maybeClass(disabled, 'disabled')
-          + maybeClass(hero, 'hero')
+        className={
+          "card" +
+          maybeClass(selected, "selected") +
+          maybeClass(disabled, "disabled") +
+          maybeClass(hero, "hero")
         }
-        alt={data ? data.name : 'placeholder'}
+        alt={data ? data.name : "placeholder"}
         src={data ? ipfs.getHttpMirror(data.image) : placeholder}
       />
       {data && (

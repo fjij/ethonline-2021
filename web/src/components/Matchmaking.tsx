@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import useInterval from '../hooks/useInterval';
-import { message, channel, matchmaking } from '../comms';
+import React, { useEffect, useState } from "react";
+import { Link, Redirect } from "react-router-dom";
+import useInterval from "../hooks/useInterval";
+import { message, channel, matchmaking } from "../comms";
 
 export default function Matchmaking() {
-
   const MAX_NEGOTIATION_COUNTER = 5;
 
   const [lfg, setLfg] = useState(false);
-  const [state, setState] = useState<matchmaking.State>({ key: 'none' });
+  const [state, setState] = useState<matchmaking.State>({ key: "none" });
   const [negotiationCounter, setNegotiationCounter] = useState(0);
 
   const [backupLink, setBackupLink] = useState<string>();
@@ -16,54 +15,58 @@ export default function Matchmaking() {
   useEffect(() => {
     if (lfg) {
       setNegotiationCounter(0);
-      setState({ key: 'searching' });
+      setState({ key: "searching" });
       return message.listen((msg) => {
         console.log(msg.data, msg.sender);
-        setState(state => matchmaking.handleMessage(state, msg));
+        setState((state) => matchmaking.handleMessage(state, msg));
       }, channel.matchmaking);
     } else {
-      setState({ key: 'none' });
+      setState({ key: "none" });
     }
   }, [lfg]);
 
   useInterval(() => {
     if (lfg) {
-      if (state.key === 'searching') {
+      if (state.key === "searching") {
         matchmaking.sendMatchPosting();
-      } else if (state.key === 'negotiating') {
+      } else if (state.key === "negotiating") {
         if (negotiationCounter < MAX_NEGOTIATION_COUNTER) {
-          setNegotiationCounter(x => x + 1);
+          setNegotiationCounter((x) => x + 1);
         } else {
           setNegotiationCounter(0);
-          setState(s => s.key === 'negotiating' ? { key: 'searching' } : s);
+          setState((s) => (s.key === "negotiating" ? { key: "searching" } : s));
         }
       }
     }
   }, 3000);
 
   useEffect(() => {
-    if (state.key === 'found') {
+    if (state.key === "found") {
       setBackupLink(`/game/${state.other}`);
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [state.key]);
 
   return (
     <div className="matchmaking">
-      { lfg ?
+      {lfg ? (
         <>
-          <p>{ state.key }</p>
-          { backupLink && <>
-            <Link to={backupLink}>Click here you aren't automatically redirected...</Link>
-            <Redirect to={backupLink} />
+          <p>{state.key}</p>
+          {backupLink && (
+            <>
+              <Link to={backupLink}>
+                Click here you aren't automatically redirected...
+              </Link>
+              <Redirect to={backupLink} />
             </>
-          }
-          <button onClick={ () => setLfg(false) }> Stop</button>
-        </>:
-        <>
-          <button onClick={ () => setLfg(true) }> Play </button>
+          )}
+          <button onClick={() => setLfg(false)}> Stop</button>
         </>
-      }
+      ) : (
+        <>
+          <button onClick={() => setLfg(true)}> Play </button>
+        </>
+      )}
     </div>
   );
 }

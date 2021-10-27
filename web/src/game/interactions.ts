@@ -1,60 +1,61 @@
 export interface Inflict {
-  name: 'inflict';
+  name: "inflict";
   keywords: Keyword[];
 }
 
 export interface Discard {
-  name: 'discard';
+  name: "discard";
   value: number;
 }
 
 export interface Empower {
-  name: 'empower';
+  name: "empower";
   keywords: Keyword[];
 }
 
 export interface Flip {
-  name: 'flip';
+  name: "flip";
   keywords: Keyword[];
 }
 
 export interface FlipResult {
-  name: 'flip-result';
+  name: "flip-result";
   keywords: Keyword[];
   heads: boolean;
 }
 
 export interface Swap {
-  name: 'swap';
+  name: "swap";
 }
 
 export interface Plus {
-  name: 'plus';
+  name: "plus";
   value: number;
 }
 
 export interface Immune {
-  name: 'immune';
+  name: "immune";
 }
 
 export interface Squelch {
-  name: 'squelch';
+  name: "squelch";
 }
 
 export interface Draw {
-  name: 'draw';
-  value: number
+  name: "draw";
+  value: number;
 }
 
 export interface FailedKeyword {
-  name: 'fail';
+  name: "fail";
   keyword: Keyword;
 }
 
 export interface OwnedKeywordResult {
   isOther: boolean;
-  result: Inflict
-    | Discard 
+  result:
+    | Inflict
+    | Discard
     | Empower
     | FlipResult
     | Swap
@@ -65,7 +66,8 @@ export interface OwnedKeywordResult {
     | FailedKeyword;
 }
 
-export type Keyword = Flip
+export type Keyword =
+  | Flip
   | Inflict
   | Empower
   | Swap
@@ -76,20 +78,20 @@ export type Keyword = Flip
   | Squelch;
 
 const PRIORITY_LIST = [
-  'immune',
-  'squelch',
+  "immune",
+  "squelch",
 
-  'flip',
+  "flip",
 
-  'inflict',
-  'plus',
+  "inflict",
+  "plus",
 
-  'discard',
-  'draw',
+  "discard",
+  "draw",
 
-  'empower',
+  "empower",
 
-  'swap',
+  "swap",
 ];
 
 interface OwnedKeyword {
@@ -98,9 +100,9 @@ interface OwnedKeyword {
 }
 
 export interface InteractionResult {
-  keywords: OwnedKeywordResult[],
-  won: boolean,
-  otherWon: boolean,
+  keywords: OwnedKeywordResult[];
+  won: boolean;
+  otherWon: boolean;
 }
 
 export function computeInteraction(
@@ -109,30 +111,40 @@ export function computeInteraction(
   otherPower: number,
   otherKeywords: Keyword[],
   isFirst: boolean,
-  randInt: (range: number) => number,
+  randInt: (range: number) => number
 ): InteractionResult {
   const stats = {
     power,
     immune: false,
-  }
+  };
   const otherStats = {
     power: otherPower,
     immune: false,
-  }
-  const ownedKeywords = keywords.map(keyword => ({ isOther: false, keyword }));
-  const otherOwnedKeywords = otherKeywords.map(keyword => ({ isOther: true, keyword }));
+  };
+  const ownedKeywords = keywords.map((keyword) => ({
+    isOther: false,
+    keyword,
+  }));
+  const otherOwnedKeywords = otherKeywords.map((keyword) => ({
+    isOther: true,
+    keyword,
+  }));
   let allKeywords: OwnedKeyword[] = isFirst
     ? [...ownedKeywords, ...otherOwnedKeywords]
     : [...otherOwnedKeywords, ...ownedKeywords];
 
   const emittedKeywords: OwnedKeywordResult[] = [];
 
-  while(allKeywords.length > 0) {
-    allKeywords.sort((a, b) => PRIORITY_LIST.indexOf(a.keyword.name) - PRIORITY_LIST.indexOf(b.keyword.name));
+  while (allKeywords.length > 0) {
+    allKeywords.sort(
+      (a, b) =>
+        PRIORITY_LIST.indexOf(a.keyword.name) -
+        PRIORITY_LIST.indexOf(b.keyword.name)
+    );
     const { isOther, keyword } = allKeywords.shift() as OwnedKeyword;
 
     switch (keyword.name) {
-      case 'immune': {
+      case "immune": {
         if (isOther) {
           otherStats.immune = true;
         } else {
@@ -141,46 +153,52 @@ export function computeInteraction(
         emittedKeywords.push({ isOther, result: keyword });
         break;
       }
-      case 'squelch': {
+      case "squelch": {
         if (isOther && stats.immune) {
-          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          emittedKeywords.push({ isOther, result: { name: "fail", keyword } });
           break;
         }
         if (!isOther && otherStats.immune) {
-          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          emittedKeywords.push({ isOther, result: { name: "fail", keyword } });
           break;
         }
-        allKeywords = allKeywords.filter(ownedKeyword => ownedKeyword.isOther === isOther
-          || ownedKeyword.keyword.name === 'squelch');
+        allKeywords = allKeywords.filter(
+          (ownedKeyword) =>
+            ownedKeyword.isOther === isOther ||
+            ownedKeyword.keyword.name === "squelch"
+        );
         emittedKeywords.push({ isOther, result: keyword });
         break;
       }
-      case 'flip': {
+      case "flip": {
         const heads = randInt(2) === 1;
         if (heads) {
           allKeywords.push({ keyword: keyword.keywords[0], isOther });
         } else {
           allKeywords.push({ keyword: keyword.keywords[1], isOther });
         }
-        emittedKeywords.push({ isOther, result: { ...keyword, name: 'flip-result', heads } });
+        emittedKeywords.push({
+          isOther,
+          result: { ...keyword, name: "flip-result", heads },
+        });
         break;
       }
-      case 'inflict': {
+      case "inflict": {
         if (isOther && stats.immune) {
-          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          emittedKeywords.push({ isOther, result: { name: "fail", keyword } });
           break;
         }
         if (!isOther && otherStats.immune) {
-          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          emittedKeywords.push({ isOther, result: { name: "fail", keyword } });
           break;
         }
         allKeywords = allKeywords.concat(
-          keyword.keywords.map(kw => ({ keyword: kw, isOther: !isOther }))
+          keyword.keywords.map((kw) => ({ keyword: kw, isOther: !isOther }))
         );
         emittedKeywords.push({ isOther, result: keyword });
         break;
       }
-      case 'plus': {
+      case "plus": {
         if (isOther) {
           otherStats.power += keyword.value;
         } else {
@@ -189,25 +207,25 @@ export function computeInteraction(
         emittedKeywords.push({ isOther, result: keyword });
         break;
       }
-      case 'discard': {
+      case "discard": {
         emittedKeywords.push({ isOther, result: keyword });
         break;
       }
-      case 'draw': {
+      case "draw": {
         emittedKeywords.push({ isOther, result: keyword });
         break;
       }
-      case 'empower': {
+      case "empower": {
         emittedKeywords.push({ isOther, result: keyword });
         break;
       }
-      case 'swap': {
+      case "swap": {
         if (isOther && stats.immune) {
-          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          emittedKeywords.push({ isOther, result: { name: "fail", keyword } });
           break;
         }
         if (!isOther && otherStats.immune) {
-          emittedKeywords.push({ isOther, result: { name: 'fail', keyword }});
+          emittedKeywords.push({ isOther, result: { name: "fail", keyword } });
           break;
         }
         const temp = stats.power;
@@ -225,16 +243,18 @@ export function computeInteraction(
   };
 }
 
-export function keywordToTextPlus(kw: Keyword | FlipResult | FailedKeyword): string {
-  switch(kw.name) {
-    case 'flip-result': {
+export function keywordToTextPlus(
+  kw: Keyword | FlipResult | FailedKeyword
+): string {
+  switch (kw.name) {
+    case "flip-result": {
       if (kw.heads) {
         return `Flip Heads: ${keywordToText(kw.keywords[0])}`;
       } else {
         return `Flip Tails: ${keywordToText(kw.keywords[1])}`;
       }
     }
-    case 'fail': {
+    case "fail": {
       return `${keywordToText(kw.keyword)} - Failed due to Immune`;
     }
   }
@@ -242,37 +262,39 @@ export function keywordToTextPlus(kw: Keyword | FlipResult | FailedKeyword): str
 }
 
 export function keywordToText(kw: Keyword): string {
-  switch(kw.name) {
-    case 'draw': {
+  switch (kw.name) {
+    case "draw": {
       return `Draw ${kw.value}`;
     }
-    case 'squelch': {
-      return 'Squelch';
+    case "squelch": {
+      return "Squelch";
     }
-    case 'immune': {
-      return 'Immune';
+    case "immune": {
+      return "Immune";
     }
-    case 'plus': {
+    case "plus": {
       if (kw.value >= 0) {
         return `+${kw.value}`;
       } else {
         return `${kw.value}`;
       }
     }
-    case 'swap': {
-      return 'Swap';
+    case "swap": {
+      return "Swap";
     }
-    case 'flip': {
-      return `Flip: (${keywordToText(kw.keywords[0])}) | (${keywordToText(kw.keywords[1])})`;
+    case "flip": {
+      return `Flip: (${keywordToText(kw.keywords[0])}) | (${keywordToText(
+        kw.keywords[1]
+      )})`;
     }
-    case 'empower': {
-      return `Empower: ${kw.keywords.map(keywordToText).join(', ')}`;
+    case "empower": {
+      return `Empower: ${kw.keywords.map(keywordToText).join(", ")}`;
     }
-    case 'discard': {
+    case "discard": {
       return `Discard ${kw.value}`;
     }
-    case 'inflict': {
-      return `Inflict: ${kw.keywords.map(keywordToText).join(', ')}`;
+    case "inflict": {
+      return `Inflict: ${kw.keywords.map(keywordToText).join(", ")}`;
     }
   }
 }

@@ -1,8 +1,8 @@
-const MIRROR = 'https://ipfs.io/ipfs';
+const MIRROR = "https://ipfs.io/ipfs";
 
 export function getHttpMirror(uri: string): string {
-  if (uri.substr(0, 7) !== 'ipfs://') {
-    throw new Error('not a valid ipfs uri');
+  if (uri.substr(0, 7) !== "ipfs://") {
+    throw new Error("not a valid ipfs uri");
   }
   return `${MIRROR}/${uri.substr(7)}`;
 }
