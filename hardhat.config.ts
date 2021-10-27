@@ -25,13 +25,13 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
   networks: {
-    ropsten: {
+    "Ropsten": {
       url: process.env.ROPSTEN_URL || '',
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 3,
     },
 
-    mumbai: {
+    "Polygon Testnet": {
       url: 'https://rpc-mumbai.maticvigil.com/',
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 80001
