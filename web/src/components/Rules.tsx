@@ -65,7 +65,7 @@ const TableEffects = () => {
           </tr>
           <tr>
             <td>+</td>
-            <td>Increase the power number by a number</td>
+            <td>Increase the power number</td>
             <td>Normal</td>
           </tr>
           <tr>
