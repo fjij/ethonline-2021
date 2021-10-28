@@ -1,6 +1,14 @@
-# super-card-game
+# Super Card Game
 
-EXTREMELY COOL CARD GAME
+Super Card Game is an NFT trading card game with real-time gameplay. It features card
+collecting, deck building, and online matchmaking.
+
+Check out the [demo](https://0408s2lida82j3igmivbict8m8lobqs8no39hi4m3te03hjthufg5p0.siasky.net/)
+on Polygon Testnet.
+
+See our ETHOnline showcase [here](https://showcase.ethglobal.com/ethonline2021/super-card-game).
+
+# Development
 
 ## Requirements
 
