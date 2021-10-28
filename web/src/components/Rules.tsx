@@ -42,7 +42,10 @@ const TableEffects = () => {
           </tr>
           <tr>
             <td>Flip</td>
-            <td>If heads, activate first effect. Otherwise, activate second effect.</td>
+            <td>
+              If heads, activate first effect. Otherwise, activate second
+              effect.
+            </td>
             <td>Normal</td>
           </tr>
           <tr>
