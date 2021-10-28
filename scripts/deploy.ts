@@ -24,6 +24,7 @@ async function main() {
     address: cards.address,
     chainId: hre.network.config.chainId,
     url: (hre.network.config as any).url,
+    name: hre.network.name
   }, null, 2));
 }
 

@@ -1,4 +1,5 @@
 {
+  "name": "Polygon Testnet",
   "address": "0x7cbC39e9DaDE5b188c2d5b1FE9c76583ad0C17B3",
   "chainId": 80001,
   "url": "https://rpc-mumbai.maticvigil.com/"
